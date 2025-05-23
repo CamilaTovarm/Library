@@ -12,9 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-// Primary Keys
+// Repositories
 
-// Forgeign Keys
+// Services
 
 //CORS
 builder.Services.AddCors(options =>
