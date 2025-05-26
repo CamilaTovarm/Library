@@ -29,8 +29,8 @@ namespace Library.Repositories
                 ReturnDate = returnDate,
                 LoanId = loanId,
                 FineImposed = fineImposed,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
             };
             await _db.Returns.AddAsync(newReturns);
             _db.SaveChanges();

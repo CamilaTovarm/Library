@@ -24,8 +24,8 @@ namespace Library.Repositories
             Editorial newEditorial = new Editorial
             {
                 EditorialName = editorialName,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
             };
             await _db.Editorial.AddAsync(newEditorial);
             await _db.SaveChangesAsync();

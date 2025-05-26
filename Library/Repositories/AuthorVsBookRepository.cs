@@ -25,8 +25,8 @@ namespace Library.Repositories
             {
                 AuthorId = authorId,
                 BookId = bookId,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
             };
             await _db.AuthorVsBooks.AddAsync(newAuthorVsBook);
             await _db.SaveChangesAsync();

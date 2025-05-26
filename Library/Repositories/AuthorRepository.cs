@@ -25,8 +25,8 @@ namespace Library.Repositories
             Authors newAuthors = new Authors
             {
                 AuthorName = AuthorsName,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
 
             };
             await _db.Authors.AddAsync(newAuthors);

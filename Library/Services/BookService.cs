@@ -8,7 +8,7 @@ namespace Library.Services
         Task<List<Book>> GetAll();
         Task<Book> GetBook(int id);
         Task<Book> CreateBook(string title,string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId);
-        Task<Book> UpdateBook(int id, string? title = null, string? isbn=null, DateOnly? publicationDate = null, int? pageCount=null, int? editorialId=null, int countryId=null);
+        Task<Book> UpdateBook(int id, string? title = null, string? isbn=null, DateOnly? publicationDate = null, int? pageCount=null, int? editorialId=null, int? countryId=null);
         Task<Book> DeleteBook(int id);
     }
     public class BookService: IBookService

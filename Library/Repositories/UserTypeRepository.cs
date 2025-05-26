@@ -24,8 +24,8 @@ namespace Library.Repositories
             UserType newUserType = new UserType
             {
                 UserTypeName = UserTypeName,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
             };
             await _db.UserType.AddAsync(newUserType);
             _db.SaveChanges();

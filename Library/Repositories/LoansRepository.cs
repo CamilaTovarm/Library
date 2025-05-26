@@ -26,8 +26,8 @@ namespace Library.Repositories
                 UserId = userId,
                 BookId = bookId,
                 LoanDate = loandDate,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
             };
             await _db.Loans.AddAsync(newLoans);
             await _db.SaveChangesAsync();

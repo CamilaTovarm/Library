@@ -10,7 +10,7 @@ namespace Library.Models
         public string Email { get; set; }
         public UserType UserType { get; set; }
         public int UserTypeId { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime? CreateDate { get; set; }
         public bool State { get; set; }
     }
 }

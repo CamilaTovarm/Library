@@ -32,8 +32,8 @@ namespace Library.Repositories
                 PageCount = pageCount,
                 EditorialId = editorialId,
                 CountryId = countryId,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
             };
             await _db.Books.AddAsync(newBook);
             _db.SaveChanges();

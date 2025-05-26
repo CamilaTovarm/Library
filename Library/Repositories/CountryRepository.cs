@@ -25,8 +25,8 @@ namespace Library.Repositories
             Country newCountry = new Country
             {
                 CountryName = CountryName,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
 
             };
             await _db.Country.AddAsync(newCountry);

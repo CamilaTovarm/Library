@@ -27,8 +27,8 @@ namespace Library.Repositories
                 DaysMax = daysMax,
                 FeeValue = feeValue,
                 FeeDescription = feeDescription,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
             };
             await _db.fee.AddAsync(newFee);
             _db.SaveChanges();

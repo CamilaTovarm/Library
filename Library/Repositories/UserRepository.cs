@@ -29,8 +29,8 @@ namespace Library.Repositories
                 Name = name,
                 Email = email,
                 UserTypeId = userTypeId,
-                CreateDate = DateTime.Now,
-                State = true
+                CreateDate = null,
+                State = false
             };
             await _db.User.AddAsync(newUser);
             _db.SaveChanges();
