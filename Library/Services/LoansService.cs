@@ -9,6 +9,7 @@ namespace Library.Services
         Task<Loans> GetLoan(int id);
         Task<Loans> CreateLoan(int userId, int bookId, DateTime loanDate);
         Task<Loans> UpdateLoan(int id, int? userId = null, int? bookId = null, DateTime? loanDate = null);
+        Task<Loans> DeleteLoan(int id);
     }
     public class LoansService
     {
