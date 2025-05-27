@@ -8,9 +8,10 @@ namespace Library.Repositories
     {
         Task<List<User>> GetAllUser();
         Task<User> GetUserById(int id);
-        Task<User> CreateUser(string name, string email, int userTypeId);
+        Task<User> CreateUser(string name, string email, string UserName, string password, int userTypeId);
         Task<User> UpdateUser(User user);
         Task<User> DeleteUser(User user);
+        Task<User> AuthUser(string userName);
     }
     public class UserRepository : IUserRepository
     {
@@ -19,7 +20,7 @@ namespace Library.Repositories
         {
             _db = db;
         }
-        public async Task<User> CreateUser(string name, string email, int userTypeId)
+        public async Task<User> CreateUser(string name, string UserName, string password, string email, int userTypeId)
         {
             UserType? userType = _db.UserType.FirstOrDefault(ut => ut.UserTypeId == userTypeId);
             
@@ -28,6 +29,8 @@ namespace Library.Repositories
             {
                 Name = name,
                 Email = email,
+                UserName = UserName,
+                Password = password,
                 UserTypeId = userTypeId,
                 CreateDate = null,
                 State = false
@@ -63,11 +66,20 @@ namespace Library.Repositories
             {
                 userUpdate.Name = user.Name;
                 userUpdate.Email = user.Email;
+                userUpdate.UserName = user.UserName;
+                userUpdate.Password = user.Password;
                 userUpdate.UserTypeId = user.UserTypeId;
                 await _db.SaveChangesAsync();
             }
 
             return userUpdate;
+        }
+
+
+        // AUTENTICACION------------------------------------------------------------------------------
+        public async Task<User> AuthUser(string userName)
+        {
+            return await _db.User.FirstOrDefaultAsync(u => u.UserName == userName);
         }
     }
 }
