@@ -57,7 +57,7 @@ namespace Library.Repositories
 
             if (returnsUpdate != null)
             {
-                returnsUpdate.ReturnDate = returns.CreateDate;
+                returnsUpdate.ReturnDate = returns.ReturnDate;
                 returnsUpdate.LoanId = returns.LoanId;
                 returnsUpdate.FineImposed = returns.FineImposed;
                 await _db.SaveChangesAsync();
