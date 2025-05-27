@@ -12,7 +12,7 @@ namespace Library.Repositories
         Task<Returns> UpdateReturns(Returns returns);
         Task<Returns> DeleteReturns(Returns returns);
     }
-    public class ReturnsRepository
+    public class ReturnsRepository : IReturnsRepository
     {
         private readonly LibraryDbContext _db;
         public ReturnsRepository(LibraryDbContext db)

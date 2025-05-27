@@ -12,7 +12,7 @@ namespace Library.Services
         Task<AuthorVsBook> UpdateAuthorVsBook(int id, int? authorId=null, int? bookId=null);
         Task<AuthorVsBook> DeleteAuthorVsBook(int id);
     }
-    public class AuthorVsBookService
+    public class AuthorVsBookService: IAuthorVsBookService
     {
         private readonly IAuthorVsBookRepository _authorVsBookRepository;
         public AuthorVsBookService(IAuthorVsBookRepository authorVsBookRepository)

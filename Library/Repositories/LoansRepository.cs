@@ -12,7 +12,7 @@ namespace Library.Repositories
         Task<Loans> UpdateLoans(Loans Loans);
         Task<Loans> DeleteLoans(Loans Loans);
     }
-    public class LoansRepository
+    public class LoansRepository : ILoansRepository
     {
         private readonly LibraryDbContext _db;
         public LoansRepository(LibraryDbContext db)

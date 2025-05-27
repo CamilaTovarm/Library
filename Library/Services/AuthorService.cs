@@ -11,7 +11,7 @@ namespace Library.Services
         Task<Authors> UpdateAuthors(int idAuthor, string? AuthorName = null);
         Task<Authors> DeleteAuthors(int idAuthor);
     }
-    public class AuthorService
+    public class AuthorService : IAuthorService
     {
         private readonly IAuthorsRepository _authorsRepository;
         public AuthorService(IAuthorsRepository authorsRepository)

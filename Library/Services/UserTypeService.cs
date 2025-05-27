@@ -11,7 +11,7 @@ namespace Library.Services
         Task<UserType> UpdateUserType(int idUserType, string? userTypeName = null);
         Task<UserType> DeleteUserType(int idUserType);
     }
-    public class UserTypeService
+    public class UserTypeService : IUserTypeService
     {
         private readonly IUserTypeRepository _userTypeRepository;
         public UserTypeService(IUserTypeRepository userTypeRepository)

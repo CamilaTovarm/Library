@@ -12,7 +12,7 @@ namespace Library.Repositories
         Task<AuthorVsBook> UpdateAuthorVsBook(AuthorVsBook AuthorVsBook);
         Task<AuthorVsBook> DeleteAuthorVsBook(AuthorVsBook AuthorVsBook);
     }
-    public class AuthorVsBookRepository
+    public class AuthorVsBookRepository: IAuthorVsBookRepository
     {
         public readonly LibraryDbContext _db;
         public AuthorVsBookRepository(LibraryDbContext db)

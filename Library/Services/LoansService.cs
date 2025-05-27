@@ -11,7 +11,7 @@ namespace Library.Services
         Task<Loans> UpdateLoan(int id, int? userId = null, int? bookId = null, DateTime? loanDate = null);
         Task<Loans> DeleteLoan(int id);
     }
-    public class LoansService
+    public class LoansService : ILoansService
     {
         public readonly ILoansRepository _loansRepository;
         public LoansService(ILoansRepository loansRepository)

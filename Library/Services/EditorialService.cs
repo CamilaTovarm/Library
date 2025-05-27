@@ -11,7 +11,7 @@ namespace Library.Services
         Task<Editorial> UpdateEditorial(int idEditorial, string? EditorialName = null);
         Task<Editorial> DeleteEditorial(int idEditorial);
     }
-    public class EditorialService
+    public class EditorialService: IEditorialService
     {
         private readonly IEditorialRepository _editorialRepository;
         public EditorialService(IEditorialRepository editorialRepository)

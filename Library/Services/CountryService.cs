@@ -11,7 +11,7 @@ namespace Library.Services
         Task<Country> UpdateCountry(int idCountry, string? CountryName = null);
         Task<Country> DeleteCountry(int idCountry);
     }
-    public class CountryService
+    public class CountryService: ICountryService
     {
         private readonly ICountryRepository _countryRepository;
         public CountryService(ICountryRepository countryRepository)
