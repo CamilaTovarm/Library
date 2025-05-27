@@ -7,7 +7,7 @@ namespace Library.Services
     {
         Task<List<Country>> GetAll();
         Task<Country> GetCountry(int idCountry);
-        Task<Country> CreateCountry(string CountryName);
+        Task<Country> CreateCountry(string countryName);
         Task<Country> UpdateCountry(int idCountry, string? CountryName = null);
         Task<Country> DeleteCountry(int idCountry);
     }
