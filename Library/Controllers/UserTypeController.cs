@@ -38,7 +38,7 @@ namespace Library.Controllers
 
         // UserType: api/UserType
         [HttpPost]
-        public async Task<ActionResult<UserType>> UserTypeUserType(string nameUserType)
+        public async Task<ActionResult<UserType>> PostUserType(string nameUserType)
         {
             var UserTypeToPut = await _UserTypeService.CreateUserType(nameUserType);
 
