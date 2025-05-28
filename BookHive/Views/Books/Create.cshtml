@@ -1,5 +1,9 @@
 ﻿@model BookHive.Models.BookViewModel
 
+@{
+    ViewData["Title"] = "Crear Libro - BookHive";
+}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -94,39 +98,49 @@
 
             <div id="message" class="message"></div>
 
-            <form asp-action="Create" method="post">
+            <form id="bookForm">
                 <label for="BookTitle">Título</label>
                 <input asp-for="BookTitle" id="BookTitle" name="BookTitle" required />
 
                 <label for="AuthorId">Autor</label>
                 <select asp-for="AuthorId" id="AuthorId" name="AuthorId" required>
                     <option value="">Selecciona un autor</option>
-                    @foreach (var author in ViewBag.Authors as List<BookHive.Models.AuthorViewModel>)
+                    @if (ViewBag.Authors != null)
                     {
-                        <option value="@author.AuthorId">@author.AuthorName</option>
+                        foreach (var author in ViewBag.Authors as List<BookHive.Models.AuthorViewModel>)
+                        {
+                            <option value="@author.AuthorId">@author.AuthorName</option>
+                        }
                     }
                 </select>
 
                 <label for="EditorialId">Editorial</label>
                 <select asp-for="EditorialId" id="EditorialId" name="EditorialId" required>
                     <option value="">Selecciona una editorial</option>
-                    @foreach (var editorial in ViewBag.Editorials as List<BookHive.Models.EditorialViewModel>)
+                    @if (ViewBag.Editorials != null)
                     {
-                        <option value="@editorial.EditorialId">@editorial.EditorialName</option>
+                        foreach (var editorial in ViewBag.Editorials as List<BookHive.Models.EditorialViewModel>)
+                        {
+                            <option value="@editorial.EditorialId">@editorial.EditorialName</option>
+                        }
                     }
                 </select>
 
                 <label for="CountryId">País</label>
                 <select asp-for="CountryId" id="CountryId" name="CountryId" required>
                     <option value="">Selecciona un país</option>
-                    @foreach (var country in ViewBag.Countries as List<BookHive.Models.CountryViewModel>)
+                    @if (ViewBag.Countries != null)
                     {
-                        <option value="@country.CountryId">@country.CountryName</option>
+                        foreach (var country in ViewBag.Countries as List<BookHive.Models.CountryViewModel>)
+                        {
+                            <option value="@country.CountryId">@country.CountryName</option>
+                        }
                     }
                 </select>
 
                 <label for="PublicationDate">Fecha de publicación</label>
-                <input asp-for="PublicationDate" id="PublicationDate" name="PublicationDate" type="date" required />
+                <input asp-for="PublicationDate" id="PublicationDate" name="PublicationDate" type="date" required
+                       value="@(Model.PublicationDate == DateTime.MinValue ? "" : Model.PublicationDate.ToString("yyyy-MM-dd"))" />
 
                 <label for="ISBN">ISBN</label>
                 <input asp-for="ISBN" id="ISBN" name="ISBN" />
@@ -137,10 +151,69 @@
                 <label for="ImgUrl">URL de la portada</label>
                 <input asp-for="ImgUrl" id="ImgUrl" name="ImgUrl" type="url" />
 
+                <!-- LoanState fijo a true, no se muestra checkbox -->
+
                 <button type="submit" class="btn-create">Crear libro</button>
             </form>
         </div>
     </div>
+
+    <script>
+        document.getElementById('bookForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = '';
+            messageDiv.className = 'message';
+
+            const title = document.getElementById('BookTitle').value.trim();
+            const authorId = document.getElementById('AuthorId').value;
+            const editorialId = document.getElementById('EditorialId').value;
+            const countryId = document.getElementById('CountryId').value;
+            const publicationDate = document.getElementById('PublicationDate').value;
+            const isbn = document.getElementById('ISBN').value.trim();
+            const pageCount = document.getElementById('PageCount').value;
+            const imgUrl = document.getElementById('ImgUrl').value.trim();
+
+            if (!title || !authorId || !editorialId || !countryId || !publicationDate) {
+                messageDiv.textContent = 'Por favor, completa todos los campos obligatorios.';
+                messageDiv.classList.add('error');
+                return;
+            }
+
+            const baseUrl = 'https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Book';
+            const params = new URLSearchParams({
+                title: title,
+                authorId: authorId,
+                editorialId: editorialId,
+                countryId: countryId,
+                publicationDate: publicationDate,
+                isbn: isbn,
+                pageCount: pageCount,
+                imgUrl: imgUrl,
+                loanState: 'true' // Fijo a true
+            });
+
+            try {
+                const response = await fetch(`${baseUrl}?${params.toString()}`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    messageDiv.textContent = 'Libro creado con éxito.';
+                    messageDiv.classList.add('success');
+                    this.reset();
+                } else {
+                    const errorText = await response.text();
+                    messageDiv.textContent = `Error al crear libro: ${errorText || response.statusText}`;
+                    messageDiv.classList.add('error');
+                }
+            } catch (error) {
+                messageDiv.textContent = `Error en la petición: ${error.message}`;
+                messageDiv.classList.add('error');
+            }
+        });
+    </script>
 
     @section Scripts {
         @{
