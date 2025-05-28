@@ -1,6 +1,103 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sobre Nosotros - BookHive</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f1f8f4;
+            color: #333;
+        }
 
-<p>Use this page to detail your site's privacy policy.</p>
+        header {
+            background: #3F7D58;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            header .nav-links a {
+                color: white;
+                text-decoration: none;
+                margin: 0 15px;
+                font-weight: bold;
+            }
+
+        .section {
+            padding: 80px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+
+            .section:nth-child(even) {
+                background: #e8f5e9;
+            }
+
+        .text-block {
+            max-width: 500px;
+        }
+
+            .text-block h2 {
+                color: #1b5e20;
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+
+            .text-block p {
+                font-size: 1.1em;
+                line-height: 1.6;
+            }
+
+        .img-block img {
+            border-radius: 25% 0 25% 0;
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+    </style>
+</head>
+<body>
+
+  
+
+    <!-- Misión -->
+    <div class="section">
+        <div class="text-block">
+            <h2>Nuestra Misión</h2>
+            <p>
+                En BookHive creemos que el acceso al conocimiento debe ser fácil, humano y accesible. Nuestra misión es construir una comunidad donde los libros encuentren a sus lectores sin barreras ni complicaciones.
+                No se trata solo de gestionar préstamos, sino de conectar mentes curiosas con ideas poderosas.
+            </p>
+        </div>
+        <div class="img-block">
+            <img src="/src/images/Biblic.jpg" alt="Fundadores de BookHive">
+        </div>
+    </div>
+
+    <!-- Historia -->
+    <div class="section">
+        <div class="img-block">
+            <img src="/src/images/Uni.jpg" alt="Historia de BookHive">
+        </div>
+        <div class="text-block">
+            <h2>Nuestra Historia</h2>
+            <p>
+                BookHive nació como un proyecto universitario con el propósito de digitalizar bibliotecas y modernizar su acceso.
+                Nuestro compromiso es seguir innovando y facilitar el amor por la lectura.
+            </p>
+        </div>
+    </div>
+
+  
+
+</body>
+</html>

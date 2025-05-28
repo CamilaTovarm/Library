@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión | BookHive</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .left-panel {
+            width: 50%;
+            background: linear-gradient(135deg, #14532d, #15803d);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px;
+        }
+
+            .left-panel h1 {
+                font-size: 3rem;
+                margin-bottom: 20px;
+            }
+
+            .left-panel p {
+                font-size: 1.2rem;
+                max-width: 400px;
+                line-height: 1.5;
+            }
+
+        .right-panel {
+            width: 50%;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 40px;
+        }
+
+            .right-panel h2 {
+                font-size: 2rem;
+                margin-bottom: 10px;
+                color: #1f2937;
+            }
+
+            .right-panel p {
+                font-size: 0.95rem;
+                color: #6b7280;
+                margin-bottom: 30px;
+            }
+
+                .right-panel p a {
+                    color: #14532d;
+                    text-decoration: none;
+                    font-weight: bold;
+                }
+
+        form {
+            width: 100%;
+            max-width: 350px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: #1f2937;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .forgot-password {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+            .forgot-password a {
+                color: #14532d;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+        @media (max-width: 900px) {
+            body
+
+        {
+            flex-direction: column;
+        }
+
+        .left-panel, .right-panel {
+            width: 100%;
+            height: 50%;
+        }
+
+        .left-panel {
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="left-panel">
+        <h1>¡Bienvenido a BookHive! 👋</h1>
+        <p>
+            Explora una nueva manera de préstamos de tus libros favoritos. Únete a nuestra comunidad ahora.
+        </p>
+    </div>
+
+    <div class="right-panel">
+        <h2>Bienvenido de nuevo</h2>
+        <p>¿No tienes una cuenta? <a href="#">Crea una aquí</a></p>
+        <form>
+            <input type="email" placeholder="Correo electrónico" required>
+            <input type="password" placeholder="Contraseña" required>
+            <button type="submit" class="btn-login">Iniciar sesión</button>
+            <div class="forgot-password">
+                <a href="#">¿Olvidaste tu contraseña?</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
