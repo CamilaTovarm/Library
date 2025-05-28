@@ -33,7 +33,6 @@ namespace FrontBerries.Controllers
 
                 // Obtener autores y relaciones (como ya tienes)
                 List<AuthorViewModel> authors = GetAuthors();
-                List<AuthorVsBooksViewModel> authorVsBooks = GetAuthorVsBooks();
 
                 // Obtener editoriales
                 List<EditorialViewModel> editorials = GetEditorials();
@@ -51,7 +50,6 @@ namespace FrontBerries.Controllers
 
                     book.AuthorNames = authorNames;
 
-                    // Mapear editorial
                     var editorial = editorials.FirstOrDefault(e => e.EditorialId == book.EditorialId);
                     book.EditorialName = editorial != null ? editorial.EditorialName : "Editorial desconocida";
                 }
@@ -73,7 +71,6 @@ namespace FrontBerries.Controllers
             return new List<EditorialViewModel>();
         }
 
-
         private List<AuthorViewModel> GetAuthors()
         {
             HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/Author").Result;
@@ -85,16 +82,5 @@ namespace FrontBerries.Controllers
             return new List<AuthorViewModel>();
         }
 
-        private List<AuthorVsBooksViewModel> GetAuthorVsBooks()
-        {
-            HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/AuthorVsBook").Result;
-            if (response.IsSuccessStatusCode)
-            {
-                string data = response.Content.ReadAsStringAsync().Result;
-                return JsonConvert.DeserializeObject<List<AuthorVsBooksViewModel>>(data);
-            }
-            return new List<AuthorVsBooksViewModel>();
         }
 
-    }
-}
