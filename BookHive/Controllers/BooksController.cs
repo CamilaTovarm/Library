@@ -3,10 +3,10 @@ using Library.Models; // Ajusta el namespace según tu proyecto
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 
 namespace FrontBerries.Controllers
 {
@@ -31,35 +31,80 @@ namespace FrontBerries.Controllers
                 string data = response.Content.ReadAsStringAsync().Result;
                 booksList = JsonConvert.DeserializeObject<List<BookViewModel>>(data);
 
-                // Obtener autores y relaciones (como ya tienes)
+                // Obtener autores directamente
                 List<AuthorViewModel> authors = GetAuthors();
-                List<AuthorVsBooksViewModel> authorVsBooks = GetAuthorVsBooks();
 
                 // Obtener editoriales
                 List<EditorialViewModel> editorials = GetEditorials();
 
-                // Mapear autores a libros
+                // Obtener países
+                List<CountryViewModel> countries = GetCountries();
+
+                // Mapear autor, editorial y país a cada libro
                 foreach (var book in booksList)
                 {
-                    var authorIds = authorVsBooks.Where(avb => avb.BookId == book.IdBook)
-                                                .Select(avb => avb.AuthorId)
-                                                .ToList();
-
-                    var authorNames = authors.Where(a => authorIds.Contains(a.AuthorId))
-                                             .Select(a => a.AuthorName)
-                                             .ToList();
-
-                    book.AuthorNames = authorNames;
+                    // Mapear autor directamente (asumiendo BookViewModel tiene AuthorId)
+                    var author = authors.FirstOrDefault(a => a.AuthorId == book.AuthorId);
+                    book.AuthorNames = author != null ? new List<string> { author.AuthorName } : new List<string> { "Autor desconocido" };
 
                     // Mapear editorial
                     var editorial = editorials.FirstOrDefault(e => e.EditorialId == book.EditorialId);
                     book.EditorialName = editorial != null ? editorial.EditorialName : "Editorial desconocida";
+
+                    // Mapear país
+                    var country = countries.FirstOrDefault(c => c.CountryId == book.CountryId);
+                    book.CountryName = country != null ? country.CountryName : "País desconocido";
                 }
             }
 
             var activeBooks = booksList.Where(b => b != null).ToList();
 
             return View(activeBooks);
+        }
+
+        // GET: Books/Create
+        [HttpGet]
+        public IActionResult Create()
+        {
+            ViewBag.Authors = GetAuthors();
+            ViewBag.Editorials = GetEditorials();
+            ViewBag.Countries = GetCountries();
+
+            return View();
+        }
+
+        // POST: Books/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(BookViewModel newBook)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Authors = GetAuthors();
+                ViewBag.Editorials = GetEditorials();
+                ViewBag.Countries = GetCountries();
+                return View(newBook);
+            }
+
+            var jsonContent = new StringContent(
+                JsonConvert.SerializeObject(newBook),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = _client.PostAsync(_client.BaseAddress + "/Book", jsonContent).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Books"); // Cambia si tu acción de listado se llama diferente
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Error al crear el libro en la API.");
+                ViewBag.Authors = GetAuthors();
+                ViewBag.Editorials = GetEditorials();
+                ViewBag.Countries = GetCountries();
+                return View(newBook);
+            }
         }
 
         private List<EditorialViewModel> GetEditorials()
@@ -73,7 +118,6 @@ namespace FrontBerries.Controllers
             return new List<EditorialViewModel>();
         }
 
-
         private List<AuthorViewModel> GetAuthors()
         {
             HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/Author").Result;
@@ -85,16 +129,15 @@ namespace FrontBerries.Controllers
             return new List<AuthorViewModel>();
         }
 
-        private List<AuthorVsBooksViewModel> GetAuthorVsBooks()
+        private List<CountryViewModel> GetCountries()
         {
-            HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/AuthorVsBook").Result;
+            HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/Country").Result;
             if (response.IsSuccessStatusCode)
             {
                 string data = response.Content.ReadAsStringAsync().Result;
-                return JsonConvert.DeserializeObject<List<AuthorVsBooksViewModel>>(data);
+                return JsonConvert.DeserializeObject<List<CountryViewModel>>(data);
             }
-            return new List<AuthorVsBooksViewModel>();
+            return new List<CountryViewModel>();
         }
-
     }
 }
