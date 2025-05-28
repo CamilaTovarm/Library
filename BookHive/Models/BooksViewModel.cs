@@ -8,10 +8,7 @@ namespace BookHive.Models
         public int IdBook { get; set; }
         public string BookTitle { get; set; }
         public string ISBN { get; set; }
-        public DateTime PublicationDate { get; set; }
         public int PageCount { get; set; }
-        public string Editorial { get; set; }
-        public string Country { get; set; }
         public string ImgUrl { get; set; }
 
         // Nuevo campo para el nombre del autor

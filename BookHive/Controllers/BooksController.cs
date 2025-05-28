@@ -8,11 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 
-namespace FrontBerries.Controllers
-{
     public class BooksController : Controller
     {
-        private readonly Uri baseAddress = new Uri("https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api");
         private readonly HttpClient _client;
 
         public BooksController()
@@ -25,9 +22,7 @@ namespace FrontBerries.Controllers
         public IActionResult Books()
         {
             List<BookViewModel> booksList = new List<BookViewModel>();
-
             HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/Book").Result;
-
             if (response.IsSuccessStatusCode)
             {
                 string data = response.Content.ReadAsStringAsync().Result;
@@ -37,8 +32,6 @@ namespace FrontBerries.Controllers
                 // Ejemplo: formatear fechas, filtrar, etc.
             }
 
-            // Enviar solo libros activos o aplicar filtros si es necesario
-            var activeBooks = booksList.Where(b => b != null).ToList();
 
             return View(activeBooks);
         }
