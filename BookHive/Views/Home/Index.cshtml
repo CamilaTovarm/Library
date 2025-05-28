@@ -1,8 +1,165 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>BookHive Site</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+        }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            background: #3F7D58;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo img {
+            height: 35px;
+        }
+
+        .nav-links a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+        }
+
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .btn-login, .btn-signup {
+            padding: 8px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .btn-login {
+            color: #2e7d32;
+        }
+
+        .btn-signup {
+            background-color: #66bb6a;
+            color: white;
+        }
+
+        .main {
+            text-align: center;
+            padding: 70px 20px 40px;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+        }
+
+            .main h1 {
+                font-size: 2.8em;
+                color: #1b5e20;
+            }
+
+            .main p {
+                font-size: 1.2em;
+                color: #4a4a4a;
+                margin-top: 10px;
+            }
+
+        .cards {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        .card {
+            background: white;
+            width: 250px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+            .card:hover {
+                transform: scale(1.03);
+            }
+
+        .card-icon {
+            font-size: 50px;
+            color: #43a047;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #2e7d32;
+        }
+
+        .card p {
+            color: #555;
+            margin-top: 10px;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+
+
+
+    <div class="main">
+        <h1>¡Bienvenido a BookHive!</h1>
+        <p>Disfruta de tu navegación por la mágica tierra de los libros</p>
+
+        <div class="cards">
+            <!-- Primera fila -->
+            <div class="card">
+                <div class="card-icon">📖</div>
+                <h3>Biblioteca</h3>
+                <p>Catálogo de libros disponibles en la base de datos de la Biblioteca BookHive</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📝</div>
+                <h3>Reserva</h3>
+                <p>Formulario de reserva de libros</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">✔️</div>
+                <h3>Devolución</h3>
+                <p>Devolución de libros</p>
+            </div>
+
+            <!-- Segunda fila -->
+            <div class="card">
+                <div class="card-icon">👥</div>
+                <h3>Usuarios</h3>
+                <p>Gestión de usuarios registrados</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🧑‍🎓</div>
+                <h3>Autor</h3>
+                <p>Listado y gestión de autores</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🏢</div>
+                <h3>Editorial</h3>
+                <p>Gestión de editoriales</p>
+            </div>
+
+            <!-- Tercera fila (centrada) -->
+            <div class="card" style="margin: 0 auto;">
+                <div class="card-icon">💰</div>
+                <h3>Multa</h3>
+                <p>Control y aplicación de multas por retraso</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
