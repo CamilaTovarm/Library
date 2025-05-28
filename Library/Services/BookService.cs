@@ -7,8 +7,8 @@ namespace Library.Services
     {
         Task<List<Book>> GetAll();
         Task<Book> GetBook(int id);
-        Task<Book> CreateBook(string title,string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId);
-        Task<Book> UpdateBook(int id, string? title = null, string? isbn=null, DateOnly? publicationDate = null, int? pageCount=null, int? editorialId=null, int? countryId=null);
+        Task<Book> CreateBook(string title,string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl);
+        Task<Book> UpdateBook(int id, string? title = null, string? isbn=null, DateOnly? publicationDate = null, int? pageCount=null, int? editorialId=null, int? countryId=null, string? imgUrl=null);
         Task<Book> DeleteBook(int id);
     }
     public class BookService: IBookService
@@ -18,9 +18,9 @@ namespace Library.Services
         {
             _booksRepository = booksRepository;
         }
-        public Task<Book> CreateBook(string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId)
+        public Task<Book> CreateBook(string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl)
         {
-            return _booksRepository.CreateBook(title, isbn, publicationDate, pageCount, editorialId, countryId);
+            return _booksRepository.CreateBook(title, isbn, publicationDate, pageCount, editorialId, countryId, imgUrl);
         }
         public async Task<Book> DeleteBook(int id)
         {
@@ -41,7 +41,7 @@ namespace Library.Services
         {
             return await _booksRepository.GetBookById(id);
         }
-        public async Task<Book> UpdateBook(int id, string? title = null, string? isbn = null, DateOnly? publicationDate = null, int? pageCount = null, int? editorialId = null, int? countryId=null)
+        public async Task<Book> UpdateBook(int id, string? title = null, string? isbn = null, DateOnly? publicationDate = null, int? pageCount = null, int? editorialId = null, int? countryId=null, string? imgUrl = null)
         {
             Book bookToUpdate = await _booksRepository.GetBookById(id);
             if (bookToUpdate != null)
@@ -69,6 +69,10 @@ namespace Library.Services
                 if (countryId != null)
                 {
                     bookToUpdate.CountryId = (int)countryId;
+                }
+                if (imgUrl != null)
+                {
+                    bookToUpdate.ImgUrl = imgUrl;
                 }
                 return await _booksRepository.UpdateBook(bookToUpdate);
             }

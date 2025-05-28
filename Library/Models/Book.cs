@@ -14,6 +14,7 @@ namespace Library.Models
         public int EditorialId { get; set; }
         public Country Country { get; set; }
         public int CountryId { get; set; }
+        public string ImgUrl { get; set; }
         public DateTime? CreateDate { get; set; }
         public bool State { get; set; }
     }
