@@ -1,0 +1,170 @@
+﻿@model BookHive.Models.LoansViewModel
+
+@{
+    ViewData["Title"] = "Reservar Libro - BookHive";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        /* Tu CSS aquí (puedes copiar el que ya tienes) */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+        }
+
+        .main {
+            text-align: center;
+            padding: 70px 20px 40px;
+        }
+
+        .reserve-card {
+            background: white;
+            width: 340px;
+            margin: 40px auto;
+            padding: 32px 28px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .reserve-card h2 {
+                color: #1b5e20;
+                margin-bottom: 18px;
+                font-size: 2em;
+            }
+
+            .reserve-card label {
+                display: block;
+                color: #4a4a4a;
+                font-weight: 500;
+                margin-bottom: 6px;
+                margin-top: 14px;
+                text-align: left;
+                width: 100%;
+            }
+
+            .reserve-card select, .reserve-card input {
+                width: 100%;
+                padding: 8px 10px;
+                border: 1px solid #bdbdbd;
+                border-radius: 7px;
+                font-size: 1em;
+                margin-bottom: 10px;
+                background: #f9fdf9;
+            }
+
+        .btn-reservar {
+            background-color: #43a047;
+            color: #fff;
+            border: none;
+            padding: 12px 0;
+            width: 100%;
+            border-radius: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 18px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+            .btn-reservar:hover {
+                background-color: #388e3c;
+            }
+
+        .message {
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="reserve-card">
+            <h2>Reservar libro</h2>
+
+            <div id="message" class="message"></div>
+
+            <form id="reservationForm">
+                <label for="UserId">Usuario</label>
+                <select id="UserId" name="UserId" required>
+                    <option value="">Selecciona tu usuario</option>
+                    @foreach (var user in Model.User)
+                    {
+                        <option value="@user.Value">@user.Text</option>
+                    }
+                </select>
+
+                <label for="BookId">Libro</label>
+                <select id="BookId" name="BookId" required>
+                    <option value="">Selecciona un libro</option>
+                    @foreach (var book in Model.Book)
+                    {
+                        <option value="@book.Value">@book.Text</option>
+                    }
+                </select>
+
+                <label for="LoanDate">Fecha de reserva</label>
+                <input type="date" id="LoanDate" name="LoanDate" required min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@Model.LoanDate.ToString("yyyy-MM-dd")" />
+
+                <button type="submit" class="btn-reservar">Reservar libro</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('reservationForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Evitar envío normal
+
+            const userId = document.getElementById('UserId').value;
+            const bookId = document.getElementById('BookId').value;
+            const loanDate = document.getElementById('LoanDate').value;
+            const messageDiv = document.getElementById('message');
+
+            if (!userId || !bookId || !loanDate) {
+                messageDiv.textContent = 'Por favor, completa todos los campos.';
+                messageDiv.className = 'message error';
+                return;
+            }
+
+            const url = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Loans?userId=${encodeURIComponent(userId)}&bookId=${encodeURIComponent(bookId)}&loandDate=${encodeURIComponent(loanDate)}`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    messageDiv.textContent = '¡Reserva realizada con éxito!';
+                    messageDiv.className = 'message success';
+                    // Opcional: limpiar formulario
+                    this.reset();
+                } else {
+                    messageDiv.textContent = 'Error al realizar la reserva.';
+                    messageDiv.className = 'message error';
+                }
+            })
+            .catch(error => {
+                messageDiv.textContent = 'Error: ' + error;
+                messageDiv.className = 'message error';
+            });
+        });
+    </script>
+</body>
+</html>

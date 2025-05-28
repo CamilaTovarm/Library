@@ -13,6 +13,7 @@ namespace BookHive.Models
         public string Editorial { get; set; }
         public string Country { get; set; }
         public string ImgUrl { get; set; }
+        public bool State { get; set; }
 
         // Nuevo campo para el nombre del autor
         public string AuthorName { get; set; }
