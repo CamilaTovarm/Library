@@ -71,6 +71,40 @@ namespace FrontBerries.Controllers
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(BookViewModel newBook)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Si el modelo no es válido, vuelve a mostrar el formulario con errores
+                return View(newBook);
+            }
+
+            // Serializar el objeto a JSON
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(newBook), System.Text.Encoding.UTF8, "application/json");
+
+            // Enviar POST a la API para crear el libro
+            var response = _client.PostAsync(_client.BaseAddress + "/Book", jsonContent).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Redirigir al listado o detalle tras crear exitosamente
+                return RedirectToAction(nameof(Books));
+            }
+            else
+            {
+                // Manejar error, mostrar mensaje o volver al formulario
+                ModelState.AddModelError(string.Empty, "Error al crear el libro en la API.");
+                return View(newBook);
+            }
+        }
+
+
+
+
+
+
         private List<CountryViewModel> GetCountries()
         {
             HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/Country").Result;
