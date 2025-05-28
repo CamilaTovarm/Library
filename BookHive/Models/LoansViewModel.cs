@@ -15,6 +15,7 @@ namespace BookHive.Models
         public List<SelectListItem> User { get; set; }
         public List<SelectListItem> Book { get; set; }
         public string BookTitle { get; set; }
+        public bool loanState { get; set; } // Para indicar si el libro está prestado o no
 
         public string Name { get; set; }
     }
