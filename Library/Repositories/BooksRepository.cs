@@ -8,7 +8,7 @@ namespace Library.Repositories
     {
         Task<List<Book>> GetAllBooks();
         Task<Book> GetBookById(int id);
-        Task<Book> CreateBook(string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl);
+        Task<Book> CreateBook(string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl, int authorId);
         Task<Book> UpdateBook(Book book);
         Task<Book> DeleteBook(Book book);
     }
@@ -19,7 +19,7 @@ namespace Library.Repositories
         {
             _db = db;
         }
-        public async Task<Book> CreateBook(string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl)
+        public async Task<Book> CreateBook(string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl, int authorId)
         {
             Editorial? editorial = _db.Editorial.FirstOrDefault(ut => ut.EditorialId == editorialId);
             Country? country = _db.Country.FirstOrDefault(ut => ut.CountryId == countryId);
@@ -33,6 +33,7 @@ namespace Library.Repositories
                 EditorialId = editorialId,
                 CountryId = countryId,
                 ImgUrl = imgUrl,
+                AuthorId = authorId,
                 CreateDate = null,
                 State = false
             };
@@ -72,6 +73,7 @@ namespace Library.Repositories
                 bookUpdate.EditorialId = book.EditorialId;
                 bookUpdate.CountryId = book.CountryId;
                 bookUpdate.ImgUrl = book.ImgUrl;
+                bookUpdate.AuthorId = book.AuthorId;
 
                 await _db.SaveChangesAsync();
             }
