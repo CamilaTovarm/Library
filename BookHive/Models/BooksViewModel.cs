@@ -17,6 +17,8 @@ namespace BookHive.Models
         public int PageCount { get; set; }
         public string ImgUrl { get; set; }
         public bool State { get; set; }
+        public int AuthorId { get; set; } // Para el autor principal del libro
+        public bool loanState { get; set; } // Para indicar si el libro está prestado o no
 
         // Para mostrar los autores en la vista
         public List<string> AuthorNames { get; set; } = new List<string>();
