@@ -1,0 +1,137 @@
+﻿@model List<BookViewModel>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca | BookHive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #f4fbf6;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #eafbe7;
+            border-bottom: 4px solid #2d7a41;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+            header h1 {
+                color: #2d7a41;
+                margin: 0;
+                font-size: 2.5rem;
+            }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .books-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: center;
+        }
+
+        .book-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 16px rgba(44, 122, 65, 0.08);
+            width: 220px;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: box-shadow 0.2s;
+        }
+
+            .book-card:hover {
+                box-shadow: 0 8px 24px rgba(44, 122, 65, 0.16);
+            }
+
+        .book-cover {
+            width: 100px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border: 1.5px solid #eafbe7;
+        }
+
+        .book-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2d7a41;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .book-author {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .book-year {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .book-description {
+            font-size: 0.93rem;
+            color: #444;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        @@media (max-width: 700px) {
+            .books-grid
+
+        {
+            gap: 18px;
+        }
+
+        .book-card {
+            width: 90vw;
+            max-width: 320px;
+            padding: 18px 8px;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Biblioteca BookHive</h1>
+        <p style="color:#2d7a41; font-size:1.2rem; margin-top:8px;">
+            Catálogo de libros disponibles
+        </p>
+    </header>
+    <div class="container">
+        <div class="books-grid">
+            @foreach (var book in Model)
+            {
+                <div class="book-card">
+                    <img class="book-cover" src="@book.ImgUrl" alt="Portada del libro" />
+                    <div class="book-title">@book.BookTitle</div>
+                    <div class="book-author">@book.Editorial</div>
+                    <div class="book-year">
+                        @book.PublicationDate.ToString("yyyy") | @book.Country
+                    </div>
+                    <div class="book-description">
+                        ISBN: @book.ISBN <br />
+                        Páginas: @book.PageCount
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>
