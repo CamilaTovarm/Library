@@ -73,7 +73,6 @@ namespace FrontBerries.Controllers
             return View();
         }
 
-        // POST: Books/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(BookViewModel newBook)
@@ -85,28 +84,6 @@ namespace FrontBerries.Controllers
                 ViewBag.Countries = GetCountries();
                 return View(newBook);
             }
-
-            var jsonContent = new StringContent(
-                JsonConvert.SerializeObject(newBook),
-                Encoding.UTF8,
-                "application/json");
-
-            var response = _client.PostAsync(_client.BaseAddress + "/Book", jsonContent).Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Books"); // Cambia si tu acción de listado se llama diferente
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Error al crear el libro en la API.");
-                ViewBag.Authors = GetAuthors();
-                ViewBag.Editorials = GetEditorials();
-                ViewBag.Countries = GetCountries();
-                return View(newBook);
-            }
-        }
-
         private List<EditorialViewModel> GetEditorials()
         {
             HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/Editorial").Result;

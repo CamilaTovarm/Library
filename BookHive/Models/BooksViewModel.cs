@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel;
 
-namespace BookHive.Models
-{
     public class BookViewModel
     {
         public int IdBook { get; set; }
@@ -16,12 +14,13 @@ namespace BookHive.Models
         public string ISBN { get; set; }
         public int PageCount { get; set; }
         public string ImgUrl { get; set; }
-        public bool State { get; set; }
-        public int AuthorId { get; set; } // Para el autor principal del libro
-        public bool loanState { get; set; } // Para indicar si el libro está prestado o no
 
-        // Para mostrar los autores en la vista
-        public List<string> AuthorNames { get; set; } = new List<string>();
+        [Display(Name = "Estado del préstamo")]
+        public bool LoanState { get; set; } = false;
+
+        // Listas para selects en la vista (no se envían a la API)
+        public List<AuthorViewModel> Authors { get; set; } = new List<AuthorViewModel>();
+        public List<EditorialViewModel> Editorials { get; set; } = new List<EditorialViewModel>();
+        public List<CountryViewModel> Countries { get; set; } = new List<CountryViewModel>();
     }
-
 }
