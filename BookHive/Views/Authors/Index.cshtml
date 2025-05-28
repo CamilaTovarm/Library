@@ -1,0 +1,73 @@
+﻿@model IEnumerable<BookHive.Models.AuthorViewModel>
+
+@{
+    ViewData["Title"] = "Listado de Autores";
+}
+
+<h1 class="page-title">@ViewData["Title"]</h1>
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["errorMessage"]</div>
+}
+
+@if (!Model.Any())
+{
+    <p>No hay autores registrados.</p>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th>ID Autor</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var author in Model)
+            {
+                <tr>
+                    <td>@author.AuthorId</td>
+                    <td>@author.AuthorName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<style>
+    .page-title {
+        color: #1b5e20;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        font-weight: 700;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    table.table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+        table.table th, table.table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table.table thead {
+            background-color: #43a047;
+            color: white;
+        }
+
+        table.table tbody tr:hover {
+            background-color: #f1f8f1;
+        }
+
+    .alert {
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+</style>

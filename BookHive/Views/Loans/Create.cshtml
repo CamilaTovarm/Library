@@ -151,9 +151,12 @@
             })
             .then(response => {
                 if (response.ok) {
-                    messageDiv.textContent = '¡Reserva realizada con éxito!';
+                    messageDiv.textContent = '¡Reserva realizada con éxito! Redirigiendo...';
                     messageDiv.className = 'message success';
                     this.reset();
+                    setTimeout(() => {
+                        window.location.href = '/Loans/LoanGet'; // Redirige a LoanGet
+                    }, 1500);
                 } else {
                     messageDiv.textContent = 'Error al realizar la reserva.';
                     messageDiv.className = 'message error';
@@ -167,3 +170,4 @@
     </script>
 </body>
 </html>
+

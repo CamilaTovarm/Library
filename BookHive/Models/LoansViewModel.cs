@@ -5,6 +5,7 @@ namespace BookHive.Models
 {
     public class LoansViewModel
     {
+        public int LoanId { get; set; }
         public int UserId { get; set; }
         public int BookId { get; set; }
         public DateTime LoanDate { get; set; }

@@ -20,6 +20,34 @@ namespace BookHive.Controllers
             _client = new HttpClient();
             _client.BaseAddress = baseAddress;
         }
+        [HttpGet]
+        public IActionResult LoanGet()
+        {
+            List<LoansViewModel> loanList = new List<LoansViewModel>();
+
+            HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/api/Loans").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                loanList = JsonConvert.DeserializeObject<List<LoansViewModel>>(data);
+
+                var users = GetUsers();
+                var books = GetBooks();
+
+                foreach (var loan in loanList)
+                {
+                    loan.Name = users.FirstOrDefault(u => u.UserId == loan.UserId)?.Name ?? "Usuario desconocido";
+                    loan.BookTitle = books.FirstOrDefault(b => b.BookId == loan.BookId)?.BookTitle ?? "Libro desconocido";
+                }
+            }
+            else
+            {
+                TempData["errorMessage"] = "Error al obtener las reservas desde la API.";
+            }
+
+            return View(loanList);
+        }
+
 
         [HttpGet]
         public IActionResult Create()

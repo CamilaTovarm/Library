@@ -1,0 +1,47 @@
+﻿using BookHive.Models;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Net.Http;
+
+namespace BookHive.Controllers
+{
+    public class EditorialsController : Controller
+    {
+        private readonly HttpClient _client;
+        private readonly Uri baseAddress = new Uri("https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net");
+
+        public EditorialsController()
+        {
+            _client = new HttpClient();
+            _client.BaseAddress = baseAddress;
+        }
+
+        // GET: Listar editoriales
+        [HttpGet]
+        public IActionResult Index()
+        {
+            List<EditorialViewModel> editorials = new List<EditorialViewModel>();
+
+            var response = _client.GetAsync(_client.BaseAddress + "/api/Editorial").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                editorials = JsonConvert.DeserializeObject<List<EditorialViewModel>>(data);
+            }
+            else
+            {
+                TempData["errorMessage"] = "Error al obtener la lista de editoriales.";
+            }
+
+            return View(editorials);
+        }
+
+        // GET: Mostrar formulario para crear editorial
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+    }
+}
