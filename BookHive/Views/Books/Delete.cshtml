@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Lista de Libros - BookHive</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+        }
+
+        .main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #1b5e20;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .books-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+        }
+
+        .book-card {
+            background: white;
+            width: 220px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .book-cover {
+            width: 100px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1.5px solid #eafbe7;
+        }
+
+        .book-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2d7a41;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .book-author, .book-editorial, .book-year, .book-description {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .btn-delete {
+            background-color: #e53935;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+            .btn-delete:hover {
+                background-color: #b71c1c;
+            }
+
+        .message {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        @@media (max-width: 600px) {
+            .books-grid
+
+        {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .book-card {
+            width: 90vw;
+            max-width: 320px;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h1>Catálogo de Libros</h1>
+        <div id="message" class="message"></div>
+        <div id="booksGrid" class="books-grid">
+            <!-- Aquí se cargarán los libros -->
+        </div>
+    </div>
+
+    <script>
+        const apiBase = 'https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api';
+
+        async function fetchBooks() {
+            try {
+                const response = await fetch(`${apiBase}/Book`);
+                if (!response.ok) throw new Error('Error al obtener libros');
+                const books = await response.json();
+                renderBooks(books);
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        }
+
+        function renderBooks(books) {
+            const container = document.getElementById('booksGrid');
+            container.innerHTML = '';
+
+            if (!books.length) {
+                container.innerHTML = '<p>No hay libros disponibles.</p>';
+                return;
+            }
+
+            books.forEach(book => {
+                const card = document.createElement('div');
+                card.className = 'book-card';
+
+                card.innerHTML = `
+                    <img class="book-cover" src="${book.imgUrl || 'https://via.placeholder.com/100x140?text=No+Image'}" alt="Portada del libro" />
+                    <div class="book-title">${escapeHtml(book.bookTitle)}</div>
+                    <div class="book-author">${escapeHtml(book.authorNames?.join(', ') || 'Autor desconocido')}</div>
+                    <div class="book-editorial">${escapeHtml(book.editorialName || 'Editorial desconocida')}</div>
+                    <div class="book-year">${book.publicationDate ? new Date(book.publicationDate).getFullYear() : 'Año desconocido'}</div>
+                    <div class="book-description">ISBN: ${escapeHtml(book.isbn || 'N/A')}<br/>Páginas: ${book.pageCount || 'N/A'}</div>
+                    <button class="btn-delete" data-id="${book.bookId}">Eliminar</button>
+                `;
+
+                container.appendChild(card);
+            });
+
+            // Asignar evento a botones eliminar
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.getAttribute('data-id');
+                    if (id && confirm('¿Estás seguro de eliminar este libro?')) {
+                        await deleteBook(id);
+                    }
+                });
+            });
+        }
+
+        async function deleteBook(id) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = '';
+            messageDiv.className = 'message';
+
+            try {
+                const response = await fetch(`${apiBase}/Book/Delete/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    showMessage('Libro eliminado con éxito.', 'success');
+                    await fetchBooks();
+                } else {
+                    const errorText = await response.text();
+                    showMessage(`Error al eliminar libro: ${errorText || response.statusText}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Error en la petición: ${error.message}`, 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+        }
+
+        // Función para escapar texto y evitar XSS
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, function(m) {
+                return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+            });
+        }
+
+        // Cargar libros al iniciar
+        fetchBooks();
+    </script>
+</body>
+</html>

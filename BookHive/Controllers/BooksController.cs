@@ -128,7 +128,29 @@ namespace FrontBerries.Controllers
         }
 
 
-
+        [HttpGet]
+        public IActionResult Delete()
+        {
+            // Cargar lista de libros para mostrar
+            var books = Books(); // Implementa este método para obtener libros
+            return View(books);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            // Lógica para eliminar libro vía API
+            var response = _client.DeleteAsync($"/Book/Delete/{id}").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["successMessage"] = "Libro eliminado con éxito.";
+            }
+            else
+            {
+                TempData["errorMessage"] = $"Error al eliminar libro: {response.ReasonPhrase}";
+            }
+            return RedirectToAction("Delete");
+        }
 
 
         private List<EditorialViewModel> GetEditorials()
