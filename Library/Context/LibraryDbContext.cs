@@ -39,6 +39,7 @@ namespace Library.Context
             modelBuilder.Entity<AuthorVsBook>().HasOne(e => e.Book).WithMany().HasForeignKey(e => e.BookId);
             modelBuilder.Entity<Book>().HasOne(e => e.Editorial).WithMany().HasForeignKey(e => e.EditorialId);
             modelBuilder.Entity<Book>().HasOne(e => e.Country).WithMany().HasForeignKey(e => e.CountryId);
+            modelBuilder.Entity<Book>().HasOne(e => e.Author).WithMany().HasForeignKey(e => e.AuthorId);
             modelBuilder.Entity<User>().HasOne(e => e.UserType).WithMany().HasForeignKey(e => e.UserTypeId);
             modelBuilder.Entity<Loans>().HasOne(e => e.User).WithMany().HasForeignKey(e => e.UserId);
             modelBuilder.Entity<Loans>().HasOne(e => e.Book).WithMany().HasForeignKey(e => e.BookId);

@@ -4,6 +4,7 @@ using Library.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250528201419_loan+author")]
+    partial class loanauthor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,9 +108,6 @@ namespace Library.Migrations
                     b.Property<string>("ImgUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("LoanState")
-                        .HasColumnType("bit");
 
                     b.Property<int>("PageCount")
                         .HasColumnType("int");
@@ -223,6 +223,9 @@ namespace Library.Migrations
 
                     b.Property<DateTime>("LoanDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("LoanState")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("State")
                         .HasColumnType("bit");
@@ -353,7 +356,7 @@ namespace Library.Migrations
 
             modelBuilder.Entity("Library.Models.Book", b =>
                 {
-                    b.HasOne("Library.Models.Authors", "Author")
+                    b.HasOne("Library.Models.Authors", "author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -371,11 +374,11 @@ namespace Library.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Author");
-
                     b.Navigation("Country");
 
                     b.Navigation("Editorial");
+
+                    b.Navigation("author");
                 });
 
             modelBuilder.Entity("Library.Models.Loans", b =>

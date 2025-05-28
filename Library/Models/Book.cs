@@ -15,8 +15,9 @@ namespace Library.Models
         public Country Country { get; set; }
         public int CountryId { get; set; }
         public string ImgUrl { get; set; }
-        public Authors author { get; set; }
+        public Authors Author { get; set; }
         public int AuthorId { get; set; }
+        public bool LoanState { get; set; }
         public DateTime? CreateDate { get; set; }
         public bool State { get; set; }
     }

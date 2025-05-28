@@ -38,9 +38,9 @@ namespace Library.Controllers
 
         // Book: api/Book
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl, int authorId)
+        public async Task<ActionResult<Book>> PostBook(string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl, int authorId, bool loanState)
         {
-            var BookToPut = await _BookService.CreateBook(title, isbn, publicationDate, pageCount, editorialId, countryId, imgUrl, authorId);
+            var BookToPut = await _BookService.CreateBook(title, isbn, publicationDate, pageCount, editorialId, countryId, imgUrl, authorId, loanState);
 
             if (BookToPut != null)
             {
@@ -56,9 +56,9 @@ namespace Library.Controllers
 
         // PUT: api/Book/5
         [HttpPut("Update/{idBook}")]
-        public async Task<ActionResult<Book>> PutBook(int idBook, string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl, int authorId)
+        public async Task<ActionResult<Book>> PutBook(int idBook, string title, string isbn, DateOnly publicationDate, int pageCount, int editorialId, int countryId, string imgUrl, int authorId,bool loanState)
         {
-            var BookToPut = await _BookService.UpdateBook(idBook, title, isbn, publicationDate, pageCount, editorialId, countryId, imgUrl, authorId);
+            var BookToPut = await _BookService.UpdateBook(idBook, title, isbn, publicationDate, pageCount, editorialId, countryId, imgUrl, authorId, loanState);
 
             if (BookToPut != null)
             {
