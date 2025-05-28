@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel;
 
 namespace BookHive.Models
 {
@@ -7,15 +8,18 @@ namespace BookHive.Models
     {
         public int IdBook { get; set; }
         public string BookTitle { get; set; }
-        public string ISBN { get; set; }
+        public int EditorialId { get; set; }
+        public string EditorialName { get; set; }  // Para mostrar en la vista
         public DateTime PublicationDate { get; set; }
+        public int CountryId { get; set; }
+        public string CountryName { get; set; }
+        public string ISBN { get; set; }
         public int PageCount { get; set; }
-        public string Editorial { get; set; }
-        public string Country { get; set; }
         public string ImgUrl { get; set; }
+        public bool State { get; set; }
 
-        // Nuevo campo para el nombre del autor
-        public string AuthorName { get; set; }
+        // Para mostrar los autores en la vista
+        public List<string> AuthorNames { get; set; } = new List<string>();
     }
 
 }
