@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>BookHive - Devoluciones</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            background: #3F7D58;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo img {
+            height: 35px;
+        }
+
+        .nav-links a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+        }
+
+        .main {
+            text-align: center;
+            padding: 70px 20px 40px;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+            min-height: 100vh;
+        }
+
+            .main h1 {
+                font-size: 2.8em;
+                color: #1b5e20;
+                margin-bottom: 10px;
+            }
+
+            .main p {
+                font-size: 1.2em;
+                color: #4a4a4a;
+                margin-bottom: 40px;
+            }
+
+        .cards {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            width: 280px;
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+
+        .card-icon {
+            font-size: 60px;
+            color: #43a047;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #2e7d32;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 1em;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .card a.button {
+            background-color: #43a047;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+            .card a.button:hover {
+                background-color: #388e3c;
+            }
+    </style>
+</head>
+<body>
+
+
+    <div class="main">
+        <h1>Gestión de Devoluciones</h1>
+        <p>Selecciona una opción para continuar</p>
+
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon">↩️</div>
+                <h3>Registrar Devolución</h3>
+                <p>Ingresa la devolución de un libro reservado en BookHive.</p>
+                <a href="/returns/create" class="button" aria-label="Registrar Devolución">Registrar</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📋</div>
+                <h3>Ver Devoluciones</h3>
+                <p>Consulta las devoluciones realizadas y su estado actual.</p>
+                <a href="/returns" class="button" aria-label="Ver Devoluciones">Ver Devoluciones</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
