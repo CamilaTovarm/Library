@@ -1,0 +1,155 @@
+﻿@model BookHive.Models.BookViewModel
+
+@{
+    ViewData["Title"] = "Crear Libro - BookHive";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+        }
+
+        .main {
+            text-align: center;
+            padding: 70px 20px 40px;
+        }
+
+        .create-card {
+            background: white;
+            width: 380px;
+            margin: 40px auto;
+            padding: 32px 28px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .create-card h2 {
+                color: #1b5e20;
+                margin-bottom: 18px;
+                font-size: 2em;
+            }
+
+            .create-card label {
+                display: block;
+                color: #4a4a4a;
+                font-weight: 500;
+                margin-bottom: 6px;
+                margin-top: 14px;
+                text-align: left;
+                width: 100%;
+            }
+
+            .create-card select, .create-card input {
+                width: 100%;
+                padding: 8px 10px;
+                border: 1px solid #bdbdbd;
+                border-radius: 7px;
+                font-size: 1em;
+                margin-bottom: 10px;
+                background: #f9fdf9;
+            }
+
+        .btn-create {
+            background-color: #43a047;
+            color: #fff;
+            border: none;
+            padding: 12px 0;
+            width: 100%;
+            border-radius: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 18px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+            .btn-create:hover {
+                background-color: #388e3c;
+            }
+
+        .message {
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="create-card">
+            <h2>Crear nuevo libro</h2>
+
+            <div id="message" class="message"></div>
+
+            <form asp-action="Create" method="post">
+                <label for="BookTitle">Título</label>
+                <input asp-for="BookTitle" id="BookTitle" name="BookTitle" required />
+
+                <label for="AuthorId">Autor</label>
+                <select asp-for="AuthorId" id="AuthorId" name="AuthorId" required>
+                    <option value="">Selecciona un autor</option>
+                    @foreach (var author in ViewBag.Authors as List<BookHive.Models.AuthorViewModel>)
+                    {
+                        <option value="@author.AuthorId">@author.AuthorName</option>
+                    }
+                </select>
+
+                <label for="EditorialId">Editorial</label>
+                <select asp-for="EditorialId" id="EditorialId" name="EditorialId" required>
+                    <option value="">Selecciona una editorial</option>
+                    @foreach (var editorial in ViewBag.Editorials as List<BookHive.Models.EditorialViewModel>)
+                    {
+                        <option value="@editorial.EditorialId">@editorial.EditorialName</option>
+                    }
+                </select>
+
+                <label for="CountryId">País</label>
+                <select asp-for="CountryId" id="CountryId" name="CountryId" required>
+                    <option value="">Selecciona un país</option>
+                    @foreach (var country in ViewBag.Countries as List<BookHive.Models.CountryViewModel>)
+                    {
+                        <option value="@country.CountryId">@country.CountryName</option>
+                    }
+                </select>
+
+                <label for="PublicationDate">Fecha de publicación</label>
+                <input asp-for="PublicationDate" id="PublicationDate" name="PublicationDate" type="date" required />
+
+                <label for="ISBN">ISBN</label>
+                <input asp-for="ISBN" id="ISBN" name="ISBN" />
+
+                <label for="PageCount">Número de páginas</label>
+                <input asp-for="PageCount" id="PageCount" name="PageCount" type="number" min="1" />
+
+                <label for="ImgUrl">URL de la portada</label>
+                <input asp-for="ImgUrl" id="ImgUrl" name="ImgUrl" type="url" />
+
+                <button type="submit" class="btn-create">Crear libro</button>
+            </form>
+        </div>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</body>
+</html>

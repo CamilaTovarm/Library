@@ -3,10 +3,10 @@ using Library.Models; // Ajusta el namespace según tu proyecto
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 
 namespace FrontBerries.Controllers
 {
@@ -62,6 +62,51 @@ namespace FrontBerries.Controllers
             return View(activeBooks);
         }
 
+        // GET: Books/Create
+        [HttpGet]
+        public IActionResult Create()
+        {
+            ViewBag.Authors = GetAuthors();
+            ViewBag.Editorials = GetEditorials();
+            ViewBag.Countries = GetCountries();
+
+            return View();
+        }
+
+        // POST: Books/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(BookViewModel newBook)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Authors = GetAuthors();
+                ViewBag.Editorials = GetEditorials();
+                ViewBag.Countries = GetCountries();
+                return View(newBook);
+            }
+
+            var jsonContent = new StringContent(
+                JsonConvert.SerializeObject(newBook),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = _client.PostAsync(_client.BaseAddress + "/Book", jsonContent).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Books"); // Cambia si tu acción de listado se llama diferente
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Error al crear el libro en la API.");
+                ViewBag.Authors = GetAuthors();
+                ViewBag.Editorials = GetEditorials();
+                ViewBag.Countries = GetCountries();
+                return View(newBook);
+            }
+        }
+
         private List<EditorialViewModel> GetEditorials()
         {
             HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/Editorial").Result;
@@ -95,6 +140,4 @@ namespace FrontBerries.Controllers
             return new List<CountryViewModel>();
         }
     }
-
- }
-
+}
