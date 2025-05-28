@@ -121,9 +121,15 @@
                 <div class="book-card">
                     <img class="book-cover" src="@book.ImgUrl" alt="Portada del libro" />
                     <div class="book-title">@book.BookTitle</div>
-                    <div class="book-author">@book.Editorial</div>
+
+                    <div class="book-author">
+                            @string.Join(", ", book.AuthorNames)
+                    </div>
+                    
+
+                    <div class="book-editorial">@book.EditorialName</div>
                     <div class="book-year">
-                        @book.PublicationDate.ToString("yyyy") | @book.Country
+                        @book.PublicationDate.ToString("yyyy") | @book.CountryName
                     </div>
                     <div class="book-description">
                         ISBN: @book.ISBN <br />
