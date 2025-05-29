@@ -41,6 +41,7 @@ namespace BookHive.Controllers
         }
 
         // Métodos auxiliares
+
         private List<LoansViewModel> GetLoans()
         {
             var response = _client.GetAsync("/api/Loans").Result;
@@ -55,7 +56,12 @@ namespace BookHive.Controllers
             foreach (var loan in loans)
             {
                 loan.Name = users.FirstOrDefault(u => u.UserId == loan.UserId)?.Name ?? "Usuario desconocido";
-                loan.BookTitle = books.FirstOrDefault(b => b.BookId == loan.BookId)?.BookTitle ?? "Libro desconocido";
+
+                var book = books.FirstOrDefault(b => b.BookId == loan.BookId);
+                loan.BookTitle = book?.BookTitle ?? "Libro desconocido";
+
+                // Asignar el estado del libro (prestado o disponible)
+                loan.loanState = book?.LoanState ?? false;
             }
 
             return loans;
