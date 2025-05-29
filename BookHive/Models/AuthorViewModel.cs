@@ -10,5 +10,6 @@ namespace BookHive.Models
 
         [JsonProperty("authorName")]
         public string AuthorName { get; set; }
+        public bool State { get; set; }
     }
 }

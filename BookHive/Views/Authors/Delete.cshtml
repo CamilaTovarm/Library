@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Eliminar Autores - BookHive</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+        }
+
+        .main {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1b5e20;
+            margin-bottom: 30px;
+        }
+
+        .authors-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .author-item {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .author-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2d7a41;
+            text-align: left;
+        }
+
+        .btn-delete {
+            background-color: #e53935;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+            .btn-delete:hover {
+                background-color: #b71c1c;
+            }
+
+        .message {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        @@media (max-width: 480px) {
+            .author-item
+
+        {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .btn-delete {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h1>Eliminar Autores Activos</h1>
+        <div id="message" class="message"></div>
+        <ul id="authorsList" class="authors-list">
+            <!-- Aquí se cargarán los autores -->
+        </ul>
+    </div>
+
+    <script>
+        const apiBase = 'https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api';
+
+        async function fetchAuthors() {
+            try {
+                const response = await fetch(`${apiBase}/Author`);
+                if (!response.ok) throw new Error('Error al obtener autores');
+                const authors = await response.json();
+                renderAuthors(authors);
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        }
+
+        function renderAuthors(authors) {
+            const container = document.getElementById('authorsList');
+            container.innerHTML = '';
+
+            // Filtrar autores activos (state === false)
+            const activeAuthors = authors.filter(author => author.state === false);
+
+            if (!activeAuthors.length) {
+                container.innerHTML = '<li>No hay autores activos disponibles.</li>';
+                return;
+            }
+
+            activeAuthors.forEach(author => {
+                const authorId = author.IdAuthor || author.authorId || author.id; // Ajusta según JSON
+
+                const li = document.createElement('li');
+                li.className = 'author-item';
+
+                li.innerHTML = `
+                    <div class="author-name">${escapeHtml(author.authorName || author.name || '')}</div>
+                    <button class="btn-delete" data-id="${authorId}">Eliminar</button>
+                `;
+
+                container.appendChild(li);
+            });
+
+            // Asignar evento eliminar a cada botón
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.getAttribute('data-id');
+                    if (id && confirm('¿Estás seguro de eliminar este autor?')) {
+                        await deleteAuthor(id);
+                    }
+                });
+            });
+        }
+
+        async function deleteAuthor(id) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = '';
+            messageDiv.className = 'message';
+
+            try {
+                const response = await fetch(`${apiBase}/Author/Delete/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    showMessage('Autor eliminado con éxito.', 'success');
+                    await fetchAuthors();
+                } else {
+                    const errorText = await response.text();
+                    showMessage(`Error al eliminar autor: ${errorText || response.statusText}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Error en la petición: ${error.message}`, 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, function(m) {
+                return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+            });
+        }
+
+        // Cargar autores al iniciar
+        fetchAuthors();
+    </script>
+</body>
+</html>
