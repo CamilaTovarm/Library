@@ -1,0 +1,188 @@
+﻿@model BookHive.Models.AuthorViewModel
+
+@{
+    ViewData["Title"] = "Actualizar Autor - BookHive";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Actualizar Autor - BookHive</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .author-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .edit-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #43a047;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            button:hover {
+                background-color: #388e3c;
+            }
+
+        .message {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Selector de autor -->
+        <div class="author-selector">
+            <h2>Seleccionar autor a actualizar</h2>
+            <select id="authorSelector">
+                <option value="">Seleccione un autor...</option>
+            </select>
+        </div>
+
+        <!-- Formulario de actualización -->
+        <form id="editForm" class="edit-form">
+            <h2>Editar Autor</h2>
+
+            <input type="hidden" id="authorId">
+
+            <label>Nombre del Autor:</label>
+            <input type="text" id="authorName" required>
+
+            <div class="message" id="message"></div>
+            <button type="submit">Actualizar Autor</button>
+        </form>
+    </div>
+
+    <script>
+        const apiBase = 'https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api';
+        const authorSelector = document.getElementById('authorSelector');
+        const editForm = document.getElementById('editForm');
+        const message = document.getElementById('message');
+
+        // Cargar autores al iniciar
+        async function loadAuthors() {
+            try {
+                const response = await fetch(`${apiBase}/Author`);
+                const authors = await response.json();
+
+                authors.forEach(author => {
+                    if (!author.state) { // Mostrar solo autores activos si aplica
+                        const option = document.createElement('option');
+                        option.value = author.authorId;
+                        option.textContent = author.authorName;
+                        authorSelector.appendChild(option);
+                    }
+                });
+            } catch (error) {
+                showMessage(`Error cargando autores: ${error.message}`, 'error');
+            }
+        }
+
+        // Manejar selección de autor
+        authorSelector.addEventListener('change', async (e) => {
+            const authorId = e.target.value;
+            if (!authorId) {
+                editForm.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBase}/Author/${authorId}`);
+                const author = await response.json();
+
+                document.getElementById('authorId').value = author.authorId;
+                document.getElementById('authorName').value = author.authorName;
+
+                editForm.style.display = 'block';
+            } catch (error) {
+                showMessage(`Error cargando autor: ${error.message}`, 'error');
+            }
+        });
+
+        // Manejar envío del formulario
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const authorId = document.getElementById('authorId').value;
+            const authorName = document.getElementById('authorName').value;
+
+            try {
+                const response = await fetch(`${apiBase}/Author/Update/${authorId}?authorName=${encodeURIComponent(authorName)}`, {
+                    method: 'PUT'
+                });
+
+                if (response.ok) {
+                    showMessage('Autor actualizado exitosamente', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    const errorText = await response.text();
+                    showMessage(`Error: ${errorText}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Error de conexión: ${error.message}`, 'error');
+            }
+        });
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = `message ${type}`;
+            message.style.display = 'block';
+            setTimeout(() => message.style.display = 'none', 3000);
+        }
+
+        // Inicializar
+        loadAuthors();
+    </script>
+</body>
+</html>
+

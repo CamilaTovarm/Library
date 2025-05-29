@@ -1,0 +1,219 @@
+﻿@model BookHive.Models.UserViewModel
+
+@{
+    ViewData["Title"] = "Actualizar Usuario - BookHive";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Actualizar Usuario - BookHive</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .user-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .edit-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #43a047;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            button:hover {
+                background-color: #388e3c;
+            }
+
+        .message {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Selector de usuario -->
+        <div class="user-selector">
+            <h2>Seleccionar usuario a actualizar</h2>
+            <select id="userSelector">
+                <option value="">Seleccione un usuario...</option>
+            </select>
+        </div>
+
+        <!-- Formulario de actualización -->
+        <form id="editForm" class="edit-form">
+            <h2>Editar Usuario</h2>
+
+            <input type="hidden" id="userId">
+
+            <label>Nombre:</label>
+            <input type="text" id="name" required>
+
+            <label>Email:</label>
+            <input type="email" id="email" required>
+
+            <label>Nombre de usuario:</label>
+            <input type="text" id="userName" required>
+
+            <!-- password y userTypeId no visibles ni editables -->
+
+            <div class="message" id="message"></div>
+            <button type="submit">Actualizar Usuario</button>
+        </form>
+    </div>
+
+    <script>
+        const apiBase = 'https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api';
+        const userSelector = document.getElementById('userSelector');
+        const editForm = document.getElementById('editForm');
+        const message = document.getElementById('message');
+
+        // Variables para almacenar password y userTypeId actuales (no visibles)
+        let currentPassword = '';
+        let currentUserTypeId = 0;
+
+        // Cargar usuarios al iniciar
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${apiBase}/User`);
+                const users = await response.json();
+
+                users.forEach(user => {
+                    // Asumiendo que user.state existe para filtrar activos, si no eliminar esta condición
+                    if (!user.state) {
+                        const option = document.createElement('option');
+                        option.value = user.userId;
+                        option.textContent = `${user.name} (${user.userName})`;
+                        userSelector.appendChild(option);
+                    }
+                });
+            } catch (error) {
+                showMessage(`Error cargando usuarios: ${error.message}`, 'error');
+            }
+        }
+
+        // Manejar selección de usuario
+        userSelector.addEventListener('change', async (e) => {
+            const userId = e.target.value;
+            if (!userId) {
+                editForm.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBase}/User/${userId}`);
+                if (!response.ok) throw new Error('Usuario no encontrado');
+
+                const user = await response.json();
+
+                document.getElementById('userId').value = user.userId;
+                document.getElementById('name').value = user.name;
+                document.getElementById('email').value = user.email;
+                document.getElementById('userName').value = user.userName;
+
+                // Guardamos password y userTypeId para enviarlos sin mostrar
+                currentPassword = user.password;
+                currentUserTypeId = user.userTypeId;
+
+                editForm.style.display = 'block';
+            } catch (error) {
+                showMessage(`Error cargando usuario: ${error.message}`, 'error');
+            }
+        });
+
+        // Manejar envío del formulario
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = document.getElementById('userId').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const userName = document.getElementById('userName').value;
+
+            // Construimos la URL con todos los parámetros, password y userTypeId sin cambios
+            const params = new URLSearchParams({
+                name: name,
+                email: email,
+                UserName: userName,
+                password: currentPassword,
+                userTypeId: currentUserTypeId
+            });
+
+            try {
+                const response = await fetch(`${apiBase}/User/Update/${userId}?${params.toString()}`, {
+                    method: 'PUT'
+                });
+
+                if (response.ok) {
+                    showMessage('Usuario actualizado exitosamente', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    const errorText = await response.text();
+                    showMessage(`Error: ${errorText}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Error de conexión: ${error.message}`, 'error');
+            }
+        });
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = `message ${type}`;
+            message.style.display = 'block';
+            setTimeout(() => message.style.display = 'none', 3000);
+        }
+
+        // Inicializar
+        loadUsers();
+    </script>
+</body>
+</html>
