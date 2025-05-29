@@ -39,8 +39,6 @@ namespace BookHive.Controllers
 
             return View(authors);
         }
-
-
         // GET: Mostrar formulario para crear autor
         [HttpGet]
         public IActionResult Create()
@@ -85,7 +83,6 @@ namespace BookHive.Controllers
             {
                 TempData["errorMessage"] = $"Error al eliminar autor: {response.ReasonPhrase}";
             }
-            return RedirectToAction("Delete");
         }
     }
 }
