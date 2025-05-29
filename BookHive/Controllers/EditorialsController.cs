@@ -28,6 +28,9 @@ namespace BookHive.Controllers
             {
                 string data = response.Content.ReadAsStringAsync().Result;
                 editorials = JsonConvert.DeserializeObject<List<EditorialViewModel>>(data);
+
+                // Filtrar solo editoriales activas (State == false)
+                editorials = editorials.FindAll(e => e.State == false);
             }
             else
             {
@@ -42,46 +45,6 @@ namespace BookHive.Controllers
         public IActionResult Create()
         {
             return View();
-        }
-
-        // GET: Mostrar vista para eliminar editoriales activas
-        [HttpGet]
-        public IActionResult Delete()
-        {
-            List<EditorialViewModel> editorials = new List<EditorialViewModel>();
-
-            var response = _client.GetAsync(_client.BaseAddress + "/api/Editorial").Result;
-            if (response.IsSuccessStatusCode)
-            {
-                string data = response.Content.ReadAsStringAsync().Result;
-                editorials = JsonConvert.DeserializeObject<List<EditorialViewModel>>(data);
-
-                // Filtrar solo editoriales activas (State == false)
-                editorials = editorials.FindAll(e => e.State == false);
-            }
-            else
-            {
-                TempData["errorMessage"] = "Error al obtener la lista de editoriales.";
-            }
-
-            return View(editorials);
-        }
-
-        // POST: Eliminar editorial por Id
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var response = _client.DeleteAsync($"/api/Editorial/Delete/{id}").Result;
-            if (response.IsSuccessStatusCode)
-            {
-                TempData["successMessage"] = "Editorial eliminada con éxito.";
-            }
-            else
-            {
-                TempData["errorMessage"] = $"Error al eliminar editorial: {response.ReasonPhrase}";
-            }
-            return RedirectToAction("Delete");
         }
     }
 }

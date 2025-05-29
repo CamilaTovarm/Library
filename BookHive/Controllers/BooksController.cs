@@ -50,7 +50,7 @@ namespace FrontBerries.Controllers
 
                     // Mapear editorial
                     var editorial = editorials.FirstOrDefault(e => e.EditorialId == book.EditorialId);
-                    book.EditorialName = editorial != null ? editorial.EditorialName : "Editorial desconocida";
+                    book.EditorialName = editorial != null ? editorial.EditorialName: "Editorial desconocida";
 
                     // Mapear país
                     var country = countries.FirstOrDefault(c => c.CountryId == book.CountryId);
