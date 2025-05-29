@@ -1,8 +1,16 @@
-﻿<!DOCTYPE html>
+﻿@model BookHive.Models.BookViewModel
+
+@{
+    ViewData["Title"] = "Editar Libro 🛠";
+}
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
-    <title>Actualizar Libros - BookHive</title>
+    <title>
+        Actualizar Libros 🛠
+    </title>
     <style>
         body {
             margin: 0;
@@ -78,7 +86,9 @@
     <div class="container">
         <!-- Selector de libro -->
         <div class="book-selector">
-            <h2>Seleccionar libro a actualizar</h2>
+            <h2>
+                Seleccionar libro a actualizar 🛠
+            </h2>
             <select id="bookSelector">
                 <option value="">Seleccione un libro...</option>
             </select>
