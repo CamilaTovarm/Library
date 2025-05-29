@@ -1,12 +1,14 @@
 ﻿@model BookHive.Models.UserViewModel
 
 @{
-    ViewData["Title"] = "Crear Usuario";
+    ViewData["Title"] = "Crear Usuario 🆕";
 }
 
 <div class="main">
     <div class="reserve-card">
-        <h2>Crear nuevo usuario</h2>
+        <h2 class="title-inline">
+            Crear nuevo usuario <span class="emoji">🆕</span>
+        </h2>
 
         <div id="message" class="message"></div>
 
@@ -48,6 +50,23 @@
             margin-bottom: 18px;
             font-size: 2em;
         }
+
+    .title-inline {
+        color: #1b5e20;
+        margin-bottom: 18px;
+        font-size: 2em;
+        white-space: nowrap; /* Fuerza todo en una sola línea */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .emoji {
+        font-size: 0.8em; /* Opcional: ajusta tamaño del emoji */
+        line-height: 1;
+    }
+
 
     label {
         display: block;
