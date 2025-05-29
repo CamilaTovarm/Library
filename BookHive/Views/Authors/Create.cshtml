@@ -14,7 +14,7 @@
             <label for="AuthorName">Nombre del autor</label>
             <input id="AuthorName" name="AuthorName" required />
 
-            <button type="submit" class="btn-reservar">Crear Autor</button>
+            <button type="submit" class="btn-reservar" id="btnCrearAutor">Crear Autor</button>
         </form>
     </div>
 </div>
@@ -77,8 +77,13 @@
         transition: background 0.2s;
     }
 
-        .btn-reservar:hover {
+        .btn-reservar:hover:enabled {
             background-color: #388e3c;
+        }
+
+        .btn-reservar:disabled {
+            background-color: #a5d6a7;
+            cursor: not-allowed;
         }
 
     .message {
@@ -99,6 +104,7 @@
     document.getElementById('formAuthor').addEventListener('submit', function (e) {
         e.preventDefault();
 
+        const btnCrearAutor = document.getElementById('btnCrearAutor');
         const authorName = document.getElementById('AuthorName').value.trim();
         const messageDiv = document.getElementById('message');
 
@@ -107,6 +113,10 @@
             messageDiv.className = 'message error';
             return;
         }
+
+        // Deshabilitar el botón para evitar múltiples envíos
+        btnCrearAutor.disabled = true;
+        btnCrearAutor.style.cursor = 'not-allowed';
 
         const url = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Author?authorName=${encodeURIComponent(authorName)}`;
 
@@ -124,11 +134,15 @@
             } else {
                 messageDiv.textContent = 'Error al crear el autor.';
                 messageDiv.className = 'message error';
+                btnCrearAutor.disabled = false;
+                btnCrearAutor.style.cursor = 'pointer';
             }
         })
         .catch(error => {
             messageDiv.textContent = 'Error: ' + error;
             messageDiv.className = 'message error';
+            btnCrearAutor.disabled = false;
+            btnCrearAutor.style.cursor = 'pointer';
         });
     });
 </script>

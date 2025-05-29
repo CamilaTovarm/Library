@@ -24,6 +24,7 @@ else
                 <th>Usuario</th>
                 <th>Libro</th>
                 <th>Fecha de Reserva</th>
+                <th>Estado</th> <!-- Nueva columna -->
             </tr>
         </thead>
         <tbody>
@@ -34,6 +35,16 @@ else
                     <td>@loan.Name</td>
                     <td>@loan.BookTitle</td>
                     <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        @if (loan.State)  
+                        {
+                            <span class="estado-disponible">Devuelto</span>
+                        }
+                        else  
+                        {
+                            <span class="estado-reservado">Reservado</span>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>

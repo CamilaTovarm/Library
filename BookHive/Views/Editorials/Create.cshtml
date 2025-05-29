@@ -14,7 +14,7 @@
             <label for="EditorialName">Nombre de la editorial</label>
             <input id="EditorialName" name="EditorialName" required />
 
-            <button type="submit" class="btn-reservar">Crear Editorial</button>
+            <button type="submit" class="btn-reservar" id="btnCrearEditorial">Crear Editorial</button>
         </form>
     </div>
 </div>
@@ -77,8 +77,13 @@
         transition: background 0.2s;
     }
 
-        .btn-reservar:hover {
+        .btn-reservar:hover:enabled {
             background-color: #388e3c;
+        }
+
+        .btn-reservar:disabled {
+            background-color: #a5d6a7;
+            cursor: not-allowed;
         }
 
     .message {
@@ -99,6 +104,7 @@
     document.getElementById('formEditorial').addEventListener('submit', function (e) {
         e.preventDefault();
 
+        const btnCrearEditorial = document.getElementById('btnCrearEditorial');
         const editorialName = document.getElementById('EditorialName').value.trim();
         const messageDiv = document.getElementById('message');
 
@@ -107,6 +113,10 @@
             messageDiv.className = 'message error';
             return;
         }
+
+        // Deshabilitar el botón para evitar múltiples envíos
+        btnCrearEditorial.disabled = true;
+        btnCrearEditorial.style.cursor = 'not-allowed';
 
         const url = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Editorial?nameEditorial=${encodeURIComponent(editorialName)}`;
 
@@ -124,11 +134,16 @@
             } else {
                 messageDiv.textContent = 'Error al crear la editorial.';
                 messageDiv.className = 'message error';
+                btnCrearEditorial.disabled = false;
+                btnCrearEditorial.style.cursor = 'pointer';
             }
         })
         .catch(error => {
             messageDiv.textContent = 'Error: ' + error;
             messageDiv.className = 'message error';
+            btnCrearEditorial.disabled = false;
+            btnCrearEditorial.style.cursor = 'pointer';
         });
     });
 </script>
+
