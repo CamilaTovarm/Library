@@ -124,12 +124,29 @@
     <script>
         const apiBase = 'https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api';
 
+        let authors = [];
+        let editorials = [];
+
+        async function fetchAuthors() {
+            const response = await fetch(`${apiBase}/Author`);
+            if (!response.ok) throw new Error('Error al obtener autores');
+            return await response.json();
+        }
+
+        async function fetchEditorials() {
+            const response = await fetch(`${apiBase}/Editorial`);
+            if (!response.ok) throw new Error('Error al obtener editoriales');
+            return await response.json();
+        }
+
         async function fetchBooks() {
             try {
+                // Cargar autores y editoriales primero
+                [authors, editorials] = await Promise.all([fetchAuthors(), fetchEditorials()]);
+
                 const response = await fetch(`${apiBase}/Book`);
                 if (!response.ok) throw new Error('Error al obtener libros');
                 const books = await response.json();
-                console.log(books);
                 renderBooks(books);
             } catch (error) {
                 showMessage(error.message, 'error');
@@ -140,8 +157,6 @@
             const container = document.getElementById('booksGrid');
             container.innerHTML = '';
 
-            // Filtrar solo libros activos (state === false)
-            // Según tu JSON, editorial.state indica si la editorial está activa
             const activeBooks = books.filter(book => book.state === false || book.state === undefined);
 
             if (!activeBooks.length) {
@@ -153,14 +168,14 @@
                 const card = document.createElement('div');
                 card.className = 'book-card';
 
-                // bookId o IdBook según JSON
                 const bookId = book.bookId || book.IdBook;
 
-                // Autor puede no estar en el JSON, si está, usa author.authorName, si no, muestra 'Autor desconocido'
-                const authorName = book.author?.authorName || 'Autor desconocido';
+                // Buscar nombre autor y editorial por ID
+                const author = authors.find(a => a.authorId === book.authorId);
+                const authorName = author ? author.authorName : 'Autor desconocido';
 
-                // Editorial según JSON que compartiste
-                const editorialName = book.editorial?.editorialName || 'Editorial desconocida';
+                const editorial = editorials.find(e => e.editorialId === book.editorialId);
+                const editorialName = editorial ? editorial.editorialName : 'Editorial desconocida';
 
                 card.innerHTML = `
                     <img class="book-cover" src="${book.imgUrl || 'https://via.placeholder.com/100x140?text=No+Image'}" alt="Portada del libro" />

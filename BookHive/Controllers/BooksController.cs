@@ -65,6 +65,72 @@ namespace FrontBerries.Controllers
 
 
 
+        // GET: Books/Create
+        [HttpGet]
+        public IActionResult Create()
+        {
+            ViewBag.Authors = GetAuthors();
+            ViewBag.Editorials = GetEditorials();
+            ViewBag.Countries = GetCountries();
+
+            var model = new BookViewModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(BookViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Authors = GetAuthors();
+                model.Editorials = GetEditorials();
+                model.Countries = GetCountries();
+                return View(model);
+            }
+
+            try
+            {
+                // Construir URL con parámetros codificados
+                string url = $"/Book?" +
+                             $"title={Uri.EscapeDataString(model.BookTitle)}" +
+                             $"&isbn={Uri.EscapeDataString(model.ISBN ?? "")}" +
+                             $"&publicationDate={model.PublicationDate:yyyy-MM-dd}" +
+                             $"&pageCount={model.PageCount}" +
+                             $"&editorialId={model.EditorialId}" +
+                             $"&countryId={model.CountryId}" +
+                             $"&imgUrl={Uri.EscapeDataString(model.ImgUrl ?? "")}" +
+                             $"&authorId={model.AuthorId}" +
+                             $"&loanState={model.LoanState.ToString().ToLower()}";
+
+                // Enviar POST sin cuerpo
+                HttpResponseMessage response = _client.PostAsync(_client.BaseAddress + url, null).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "¡Libro creado con éxito!";
+                    return RedirectToAction("Books");
+                }
+                else
+                {
+                    string errorContent = response.Content.ReadAsStringAsync().Result;
+                    TempData["errorMessage"] = $"Error de la API: {errorContent}";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error interno: {ex.Message}";
+            }
+
+            // Recargar listas si hay error
+            model.Authors = GetAuthors();
+            model.Editorials = GetEditorials();
+            model.Countries = GetCountries();
+            return View(model);
+        }
+
+
+
 
         [HttpGet]
         public IActionResult Delete()

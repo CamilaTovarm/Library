@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Actualizar Editorial - BookHive</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #e8f5e9, #f1f8f4);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #1b5e20;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #4a4a4a;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #bdbdbd;
+            background: #f9fdf9;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 12px;
+            background-color: #43a047;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            button:hover {
+                background-color: #388e3c;
+            }
+
+        .message {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Actualizar Editorial</h2>
+
+        <label for="editorialSelector">Selecciona una editorial</label>
+        <select id="editorialSelector">
+            <option value="">-- Seleccione una editorial --</option>
+        </select>
+
+        <form id="editEditorialForm" style="display:none;">
+            <input type="hidden" id="editorialId" />
+
+            <label for="editorialName">Nombre de la Editorial</label>
+            <input type="text" id="editorialName" required />
+
+            <button type="submit">Actualizar Editorial</button>
+        </form>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        const apiBase = 'https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api';
+        const editorialSelector = document.getElementById('editorialSelector');
+        const editForm = document.getElementById('editEditorialForm');
+        const messageDiv = document.getElementById('message');
+
+        // Cargar editoriales para selector
+        async function loadEditorials() {
+            try {
+                const response = await fetch(`${apiBase}/Editorial`);
+                if (!response.ok) throw new Error('Error al cargar editoriales');
+                const editorials = await response.json();
+
+                editorialSelector.innerHTML = '<option value="">-- Seleccione una editorial --</option>';
+                editorials.forEach(ed => {
+                    if (!ed.state) { // solo activas
+                        const option = document.createElement('option');
+                        option.value = ed.editorialId;
+                        option.textContent = ed.editorialName;
+                        editorialSelector.appendChild(option);
+                    }
+                });
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        }
+
+        // Al seleccionar editorial, cargar datos en el formulario
+        editorialSelector.addEventListener('change', async () => {
+            const id = editorialSelector.value;
+            if (!id) {
+                editForm.style.display = 'none';
+                clearForm();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBase}/Editorial/${id}`);
+                if (!response.ok) throw new Error('Error al obtener la editorial');
+                const editorial = await response.json();
+
+                document.getElementById('editorialId').value = editorial.editorialId;
+                document.getElementById('editorialName').value = editorial.editorialName;
+
+                editForm.style.display = 'block';
+                clearMessage();
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        });
+
+        // Manejar envío del formulario
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('editorialId').value;
+            const name = document.getElementById('editorialName').value.trim();
+
+            if (!name) {
+                showMessage('El nombre de la editorial es obligatorio', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBase}/Editorial/Update/${id}?nameEditorial=${encodeURIComponent(name)}`, {
+                    method: 'PUT'
+                });
+
+                if (response.ok) {
+                    showMessage('Editorial actualizada con éxito', 'success');
+                    setTimeout(() => {
+                        clearForm();
+                        editForm.style.display = 'none';
+                        editorialSelector.value = '';
+                        loadEditorials();
+                    }, 1500);
+                } else {
+                    const errorText = await response.text();
+                    showMessage(`Error: ${errorText}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Error en la petición: ${error.message}`, 'error');
+            }
+        });
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+        }
+
+        function clearMessage() {
+            messageDiv.textContent = '';
+            messageDiv.style.display = 'none';
+        }
+
+        function clearForm() {
+            document.getElementById('editorialId').value = '';
+            document.getElementById('editorialName').value = '';
+        }
+
+        // Inicializar
+        loadEditorials();
+    </script>
+</body>
+</html>
