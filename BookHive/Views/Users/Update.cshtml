@@ -1,13 +1,13 @@
-﻿@model BookHive.Models.AuthorViewModel
+﻿@model BookHive.Models.UserViewModel
 
 @{
-    ViewData["Title"] = "Actualizar Autor - BookHive";
+    ViewData["Title"] = "Actualizar Usuario - BookHive";
 }
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
-    <title>Actualizar Autor - BookHive</title>
+    <title>Actualizar Usuario - BookHive</title>
     <style>
         body {
             margin: 0;
@@ -22,7 +22,7 @@
             padding: 20px;
         }
 
-        .author-selector {
+        .user-selector {
             background: white;
             padding: 20px;
             border-radius: 10px;
@@ -81,71 +81,92 @@
 </head>
 <body>
     <div class="container">
-        <!-- Selector de autor -->
-        <div class="author-selector">
-            <h2>Seleccionar autor a actualizar</h2>
-            <select id="authorSelector">
-                <option value="">Seleccione un autor...</option>
+        <!-- Selector de usuario -->
+        <div class="user-selector">
+            <h2>Seleccionar usuario a actualizar</h2>
+            <select id="userSelector">
+                <option value="">Seleccione un usuario...</option>
             </select>
         </div>
 
         <!-- Formulario de actualización -->
         <form id="editForm" class="edit-form">
-            <h2>Editar Autor</h2>
+            <h2>Editar Usuario</h2>
 
-            <input type="hidden" id="authorId">
+            <input type="hidden" id="userId">
 
-            <label>Nombre del Autor:</label>
-            <input type="text" id="authorName" required>
+            <label>Nombre:</label>
+            <input type="text" id="name" required>
+
+            <label>Email:</label>
+            <input type="email" id="email" required>
+
+            <label>Nombre de usuario:</label>
+            <input type="text" id="userName" required>
+
+            <!-- password y userTypeId no visibles ni editables -->
 
             <div class="message" id="message"></div>
-            <button type="submit">Actualizar Autor</button>
+            <button type="submit">Actualizar Usuario</button>
         </form>
     </div>
 
     <script>
         const apiBase = 'https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api';
-        const authorSelector = document.getElementById('authorSelector');
+        const userSelector = document.getElementById('userSelector');
         const editForm = document.getElementById('editForm');
         const message = document.getElementById('message');
 
-        // Cargar autores al iniciar
-        async function loadAuthors() {
-            try {
-                const response = await fetch(`${apiBase}/Author`);
-                const authors = await response.json();
+        // Variables para almacenar password y userTypeId actuales (no visibles)
+        let currentPassword = '';
+        let currentUserTypeId = 0;
 
-                authors.forEach(author => {
-                    if (!author.state) { // Mostrar solo autores activos si aplica
+        // Cargar usuarios al iniciar
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${apiBase}/User`);
+                const users = await response.json();
+
+                users.forEach(user => {
+                    // Asumiendo que user.state existe para filtrar activos, si no eliminar esta condición
+                    if (!user.state) {
                         const option = document.createElement('option');
-                        option.value = author.authorId;
-                        option.textContent = author.authorName;
-                        authorSelector.appendChild(option);
+                        option.value = user.userId;
+                        option.textContent = `${user.name} (${user.userName})`;
+                        userSelector.appendChild(option);
                     }
                 });
             } catch (error) {
-                showMessage(`Error cargando autores: ${error.message}`, 'error');
+                showMessage(`Error cargando usuarios: ${error.message}`, 'error');
             }
         }
 
-        // Manejar selección de autor
-        authorSelector.addEventListener('change', async (e) => {
-            const authorId = e.target.value;
-            if (!authorId) {
+        // Manejar selección de usuario
+        userSelector.addEventListener('change', async (e) => {
+            const userId = e.target.value;
+            if (!userId) {
                 editForm.style.display = 'none';
                 return;
             }
 
             try {
-                const response = await fetch(`${apiBase}/Author/${authorId}`);
-                const author = await response.json();
+                const response = await fetch(`${apiBase}/User/${userId}`);
+                if (!response.ok) throw new Error('Usuario no encontrado');
 
-                document.getElementById('authorId').value = author.authorId;
-                document.getElementById('authorName').value = author.authorName;
+                const user = await response.json();
+
+                document.getElementById('userId').value = user.userId;
+                document.getElementById('name').value = user.name;
+                document.getElementById('email').value = user.email;
+                document.getElementById('userName').value = user.userName;
+
+                // Guardamos password y userTypeId para enviarlos sin mostrar
+                currentPassword = user.password;
+                currentUserTypeId = user.userTypeId;
 
                 editForm.style.display = 'block';
             } catch (error) {
-                showMessage(`Error cargando autor: ${error.message}`, 'error');
+                showMessage(`Error cargando usuario: ${error.message}`, 'error');
             }
         });
 
@@ -153,16 +174,27 @@
         editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const authorId = document.getElementById('authorId').value;
-            const authorName = document.getElementById('authorName').value;
+            const userId = document.getElementById('userId').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const userName = document.getElementById('userName').value;
+
+            // Construimos la URL con todos los parámetros, password y userTypeId sin cambios
+            const params = new URLSearchParams({
+                name: name,
+                email: email,
+                UserName: userName,
+                password: currentPassword,
+                userTypeId: currentUserTypeId
+            });
 
             try {
-                const response = await fetch(`${apiBase}/Author/Update/${authorId}?authorName=${encodeURIComponent(authorName)}`, {
+                const response = await fetch(`${apiBase}/User/Update/${userId}?${params.toString()}`, {
                     method: 'PUT'
                 });
 
                 if (response.ok) {
-                    showMessage('Autor actualizado exitosamente', 'success');
+                    showMessage('Usuario actualizado exitosamente', 'success');
                     setTimeout(() => location.reload(), 1500);
                 } else {
                     const errorText = await response.text();
@@ -181,8 +213,7 @@
         }
 
         // Inicializar
-        loadAuthors();
+        loadUsers();
     </script>
 </body>
 </html>
-

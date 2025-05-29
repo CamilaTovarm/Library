@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 
 namespace BookHive.Controllers
 {
@@ -124,6 +125,69 @@ namespace BookHive.Controllers
             }
             return RedirectToAction("Delete");
         }
+
+        // GET: User/Edit/5
+        [HttpGet("Edit/{id}")]
+        public IActionResult Edit(int id)
+        {
+            UserViewModel user = null;
+
+            var response = _client.GetAsync($"User/{id}").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                user = JsonConvert.DeserializeObject<UserViewModel>(data);
+            }
+            else
+            {
+                TempData["errorMessage"] = "Error al obtener el usuario.";
+                return RedirectToAction("Index");
+            }
+
+            return View(user);
+        }
+
+        // GET: User/Update
+        [HttpGet]
+        public IActionResult Update()
+        {
+            return View();
+        }
+
+        // PUT: User/Update/5?name=...&email=...&UserName=...
+        [HttpPut("Update/{id}")]
+        public IActionResult UpdateUser(int id, [FromQuery] string name, [FromQuery] string email, [FromQuery] string userName)
+        {
+            try
+            {
+                // Obtener usuario actual
+                var responseGet = _client.GetAsync($"User/{id}").Result;
+                if (!responseGet.IsSuccessStatusCode)
+                    return NotFound("Usuario no encontrado");
+
+                var data = responseGet.Content.ReadAsStringAsync().Result;
+                var user = JsonConvert.DeserializeObject<UserViewModel>(data);
+
+                // Actualizar solo los campos visibles
+                user.Name = name;
+                user.Email = email;
+                user.UserName = userName;
+                // password y userTypeId se mantienen igual
+
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
+                var responsePut = _client.PutAsync($"User/Update/{id}", jsonContent).Result;
+
+                if (responsePut.IsSuccessStatusCode)
+                    return Ok("Usuario actualizado correctamente");
+                else
+                    return StatusCode((int)responsePut.StatusCode, "Error al actualizar usuario");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno: {ex.Message}");
+            }
+        }
     }
 }
+
 
