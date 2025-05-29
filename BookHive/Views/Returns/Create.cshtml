@@ -124,7 +124,7 @@
         }
 
         try {
-            // Crear la devolución
+            // 1. Crear la devolución
             const returnUrl = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Returns?returnDate=${encodeURIComponent(returnDate)}&loanId=${encodeURIComponent(loanId)}&fineImposed=${encodeURIComponent(fineImposed)}`;
             const returnResponse = await fetch(returnUrl, { method: 'POST' });
 
@@ -134,7 +134,7 @@
                 return;
             }
 
-            // Cambiar estado de la reserva a false usando DELETE
+            // 2. Cambiar estado de la reserva a true (liberada) usando DELETE
             const deleteUrl = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Loans/Delete/${loanId}`;
             const deleteResponse = await fetch(deleteUrl, { method: 'DELETE' });
 
@@ -144,7 +144,46 @@
                 return;
             }
 
-            messageDiv.textContent = 'Devolución registrada y reserva actualizada con éxito. Redirigiendo...';
+            // 3. Obtener datos del préstamo para obtener BookId
+            const loanResponse = await fetch(`https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Loans/${loanId}`);
+            if (!loanResponse.ok) throw new Error('Error al obtener datos del préstamo');
+            const loanData = await loanResponse.json();
+
+            // 4. Obtener datos completos del libro
+            const bookResponse = await fetch(`https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Book/${loanData.bookId}`);
+            if (!bookResponse.ok) throw new Error('Error al obtener datos del libro');
+            const bookData = await bookResponse.json();
+
+            // Debug: Mostrar bookData para verificar nombre del campo ID
+            console.log('bookData:', bookData);
+
+            // 5. Obtener el ID correcto del libro (idBook o bookId)
+            const idLibro = bookData.idBook || bookData.bookId;
+            if (!idLibro) throw new Error('El ID del libro no está definido en la respuesta.');
+
+            // 6. Construir URL PUT con todos los datos y loanState = false
+            const updateBookUrl = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Book/Update/${idLibro}` +
+                `?title=${encodeURIComponent(bookData.bookTitle)}` +
+                `&isbn=${encodeURIComponent(bookData.isbn)}` +
+                `&publicationDate=${encodeURIComponent(bookData.publicationDate)}` +
+                `&pageCount=${bookData.pageCount}` +
+                `&editorialId=${bookData.editorialId}` +
+                `&countryId=${bookData.countryId}` +
+                `&imgUrl=${encodeURIComponent(bookData.imgUrl)}` +
+                `&authorId=${bookData.authorId}` +
+                `&loanState=false`;
+
+            const updateResponse = await fetch(updateBookUrl, { method: 'PUT' });
+
+            if (!updateResponse.ok) {
+                const errorText = await updateResponse.text();
+                messageDiv.textContent = 'Devolución registrada, pero error al actualizar disponibilidad del libro: ' + errorText;
+                messageDiv.className = 'message error';
+                return;
+            }
+
+            // Todo correcto
+            messageDiv.textContent = 'Devolución registrada, reserva y disponibilidad actualizadas con éxito.';
             messageDiv.className = 'message success';
             this.reset();
 
@@ -160,5 +199,8 @@
 </script>
 
 
+
+
+                
 
 

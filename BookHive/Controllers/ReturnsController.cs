@@ -89,10 +89,10 @@ namespace BookHive.Controllers
             return loans;
         }
 
-        // Solo reservas activas (state == true)
+        // Solo reservas activas (state == false)
         private List<LoansViewModel> GetActiveLoans()
         {
-            return GetLoans().Where(l => l.State).ToList();
+            return GetLoans().Where(l => l.State == false).ToList();
         }
 
         private List<SelectListItem> GetActiveLoansSelectList()
