@@ -58,10 +58,11 @@ namespace FrontBerries.Controllers
                 }
             }
 
-            var activeBooks = booksList.Where(b => b != null).ToList();
-
+            // Filtrar solo libros activos (Estado == 0)
+            var activeBooks = booksList.Where(b => b != null && b.State == false).ToList();
             return View(activeBooks);
         }
+
 
         // GET: Books/Create
         [HttpGet]

@@ -51,6 +51,9 @@ namespace BookHive.Models
 
         [Display(Name = "Estado del préstamo")]
         public bool LoanState { get; set; } = false;
+        // Aquí agregas la propiedad Estado (o State) para filtrar activos
+        [Display(Name = "State")]
+        public bool State { get; set; }  // Por ejemplo, 0 = activo, 1 = inactivo
 
         // Listas para selects en la vista (no se envían a la API)
         public List<AuthorViewModel> Authors { get; set; } = new List<AuthorViewModel>();
