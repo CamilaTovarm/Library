@@ -46,5 +46,48 @@ namespace BookHive.Controllers
         {
             return View();
         }
+
+
+
+
+        // GET: Vista para eliminar editoriales (lista de activas)
+        [HttpGet]
+        public IActionResult Delete()
+        {
+            List<EditorialViewModel> editorials = new List<EditorialViewModel>();
+
+            var response = _client.GetAsync(_client.BaseAddress + "/api/Editorial").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                editorials = JsonConvert.DeserializeObject<List<EditorialViewModel>>(data);
+                editorials = editorials.FindAll(e => e.State == false);
+            }
+            else
+            {
+                TempData["errorMessage"] = "Error al obtener la lista de editoriales.";
+            }
+
+            return View(editorials);
+        }
+
+        // POST: Eliminar editorial (llamado desde JavaScript)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var response = _client.DeleteAsync($"/api/Editorial/Delete/{id}").Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["successMessage"] = "Editorial eliminada correctamente";
+            }
+            else
+            {
+                TempData["errorMessage"] = $"Error al eliminar: {response.ReasonPhrase}";
+            }
+
+            return RedirectToAction("Delete");
+        }
     }
 }
