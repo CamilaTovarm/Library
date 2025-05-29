@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Actualizar Libros - BookHive</title>
     <style>
         body {
@@ -106,17 +106,23 @@
             <label>Número de páginas:</label>
             <input type="number" id="pageCount" required min="1">
 
-            <label>ID Editorial:</label>
-            <input type="number" id="editorialId" required>
+            <label>Editorial:</label>
+            <select id="editorialId" required>
+                <option value="">Seleccione una editorial...</option>
+            </select>
 
-            <label>ID País:</label>
-            <input type="number" id="countryId" required>
+            <label>País:</label>
+            <select id="countryId" required>
+                <option value="">Seleccione un país...</option>
+            </select>
 
             <label>URL Imagen:</label>
             <input type="url" id="imgUrl">
 
-            <label>ID Autor:</label>
-            <input type="number" id="authorId" required>
+            <label>Autor:</label>
+            <select id="authorId" required>
+                <option value="">Seleccione un autor...</option>
+            </select>
 
             <div class="message" id="message"></div>
             <button type="submit">Actualizar Libro</button>
@@ -128,6 +134,10 @@
         const bookSelector = document.getElementById('bookSelector');
         const editForm = document.getElementById('editForm');
         const message = document.getElementById('message');
+
+        const authorSelect = document.getElementById('authorId');
+        const editorialSelect = document.getElementById('editorialId');
+        const countrySelect = document.getElementById('countryId');
 
         // Cargar libros al iniciar
         async function loadBooks() {
@@ -148,6 +158,41 @@
             }
         }
 
+        // Cargar autores, editoriales y países para selects
+        async function loadSelectOptions() {
+            try {
+                const [authorsRes, editorialsRes, countriesRes] = await Promise.all([
+                    fetch(`${apiBase}/Author`),
+                    fetch(`${apiBase}/Editorial`),
+                    fetch(`${apiBase}/Country`)
+                ]);
+
+                const [authors, editorials, countries] = await Promise.all([
+                    authorsRes.json(),
+                    editorialsRes.json(),
+                    countriesRes.json()
+                ]);
+
+                fillSelect(authorSelect, authors, 'authorId', 'authorName');
+                fillSelect(editorialSelect, editorials, 'editorialId', 'editorialName');
+                fillSelect(countrySelect, countries, 'countryId', 'countryName');
+            } catch (error) {
+                showMessage(`Error cargando listas: ${error.message}`, 'error');
+            }
+        }
+
+        function fillSelect(selectElement, items, valueProp, textProp) {
+            selectElement.innerHTML = `<option value="">Seleccione...</option>`;
+            items.forEach(item => {
+                if (!item.state) { // Mostrar solo activos si aplica
+                    const option = document.createElement('option');
+                    option.value = item[valueProp];
+                    option.textContent = item[textProp];
+                    selectElement.appendChild(option);
+                }
+            });
+        }
+
         // Manejar selección de libro
         bookSelector.addEventListener('change', async (e) => {
             const bookId = e.target.value;
@@ -160,17 +205,16 @@
                 const response = await fetch(`${apiBase}/Book/${bookId}`);
                 const book = await response.json();
 
-                // Llenar formulario
                 document.getElementById('bookId').value = book.bookId;
                 document.getElementById('title').value = book.bookTitle;
                 document.getElementById('isbn').value = book.isbn;
-                document.getElementById('publicationDate').value =
-                    new Date(book.publicationDate).toISOString().split('T')[0];
+                document.getElementById('publicationDate').value = new Date(book.publicationDate).toISOString().split('T')[0];
                 document.getElementById('pageCount').value = book.pageCount;
-                document.getElementById('editorialId').value = book.editorialId;
-                document.getElementById('countryId').value = book.countryId;
                 document.getElementById('imgUrl').value = book.imgUrl || '';
-                document.getElementById('authorId').value = book.authorId;
+
+                authorSelect.value = book.authorId;
+                editorialSelect.value = book.editorialId;
+                countrySelect.value = book.countryId;
 
                 editForm.style.display = 'block';
             } catch (error) {
@@ -188,10 +232,10 @@
                 isbn: document.getElementById('isbn').value,
                 publicationDate: document.getElementById('publicationDate').value,
                 pageCount: document.getElementById('pageCount').value,
-                editorialId: document.getElementById('editorialId').value,
-                countryId: document.getElementById('countryId').value,
+                editorialId: editorialSelect.value,
+                countryId: countrySelect.value,
                 imgUrl: document.getElementById('imgUrl').value,
-                authorId: document.getElementById('authorId').value
+                authorId: authorSelect.value
             });
 
             try {
@@ -220,6 +264,7 @@
 
         // Inicializar
         loadBooks();
+        loadSelectOptions();
     </script>
 </body>
 </html>
