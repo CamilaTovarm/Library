@@ -125,11 +125,6 @@
 
         const url = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Returns?returnDate=${encodeURIComponent(returnDate)}&loanId=${encodeURIComponent(loanId)}&fineImposed=${encodeURIComponent(fineImposed)}`;
 
-        fetch(url, {
-            method: 'POST'
-        })
-        .then(response => {
-            if (response.ok) {
                 messageDiv.textContent = 'Devolución registrada con éxito. Redirigiendo...';
                 messageDiv.className = 'message success';
                 this.reset();
@@ -140,11 +135,6 @@
                 messageDiv.textContent = 'Error al registrar la devolución.';
                 messageDiv.className = 'message error';
             }
-        })
-        .catch(error => {
-            messageDiv.textContent = 'Error: ' + error;
-            messageDiv.className = 'message error';
-        });
     });
 </script>
 

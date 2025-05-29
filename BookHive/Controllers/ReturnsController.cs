@@ -3,7 +3,6 @@ using Library.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -18,10 +17,8 @@ namespace BookHive.Controllers
         public ReturnsController()
         {
             _client = new HttpClient();
-            _client.BaseAddress = baseAddress;
         }
 
-        // GET: Listar devoluciones
         [HttpGet]
         public IActionResult ReturnGet()
         {
@@ -45,17 +42,7 @@ namespace BookHive.Controllers
                         ret.UserName = users.FirstOrDefault(u => u.UserId == loan.UserId)?.Name ?? "Usuario desconocido";
                         ret.BookTitle = books.FirstOrDefault(b => b.BookId == loan.BookId)?.BookTitle ?? "Libro desconocido";
                     }
-                }
-            }
-            else
-            {
-                TempData["errorMessage"] = "Error al obtener las devoluciones desde la API.";
-            }
 
-            return View(returnList);
-        }
-
-        // GET: Mostrar formulario para crear devolución
         [HttpGet]
         public IActionResult Create()
         {
@@ -80,7 +67,6 @@ namespace BookHive.Controllers
 
             // Construir URL para POST con query params según API
             string urlCreateReturn = $"/api/Returns?returnDate={model.ReturnDate:yyyy-MM-dd}&loanId={model.LoanId}&fineImposed={model.FineImposed}";
-
             var response = _client.PostAsync(_client.BaseAddress + urlCreateReturn, null).Result;
 
             if (!response.IsSuccessStatusCode)
@@ -115,18 +101,6 @@ namespace BookHive.Controllers
 
                 return loans;
             }
-            return new List<LoansViewModel>();
-        }
-
-        private List<SelectListItem> GetLoansSelectList()
-        {
-            var loans = GetLoans();
-            return loans.Select(l => new SelectListItem
-            {
-                Value = l.LoanId.ToString(),
-                Text = $"ID: {l.LoanId} - Usuario: {l.Name} - Libro: {l.BookTitle}"
-            }).ToList();
-        }
 
         private List<User> GetUsers()
         {
@@ -136,8 +110,6 @@ namespace BookHive.Controllers
                 string data = response.Content.ReadAsStringAsync().Result;
                 return JsonConvert.DeserializeObject<List<User>>(data);
             }
-            return new List<User>();
-        }
 
         private List<Book> GetBooks()
         {
@@ -147,7 +119,5 @@ namespace BookHive.Controllers
                 string data = response.Content.ReadAsStringAsync().Result;
                 return JsonConvert.DeserializeObject<List<Book>>(data);
             }
-            return new List<Book>();
-        }
     }
 }

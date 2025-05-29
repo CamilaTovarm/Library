@@ -10,13 +10,11 @@ namespace BookHive.Controllers
 {
     public class LoansController : Controller
     {
-        private readonly ILogger<LoansController> _logger;
         private readonly HttpClient _client;
         private readonly Uri baseAddress = new Uri("https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net");
 
         public LoansController(ILogger<LoansController> logger)
         {
-            _logger = logger;
             _client = new HttpClient();
             _client.BaseAddress = baseAddress;
         }
@@ -39,15 +37,6 @@ namespace BookHive.Controllers
                     loan.Name = users.FirstOrDefault(u => u.UserId == loan.UserId)?.Name ?? "Usuario desconocido";
                     loan.BookTitle = books.FirstOrDefault(b => b.BookId == loan.BookId)?.BookTitle ?? "Libro desconocido";
                 }
-            }
-            else
-            {
-                TempData["errorMessage"] = "Error al obtener las reservas desde la API.";
-            }
-
-            return View(loanList);
-        }
-
 
         [HttpGet]
         public IActionResult Create()
