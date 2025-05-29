@@ -3,6 +3,7 @@ using Library.Models; // Ajusta el namespace según tu proyecto
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -57,10 +58,11 @@ namespace FrontBerries.Controllers
                 }
             }
 
-            var activeBooks = booksList.Where(b => b != null).ToList();
-
+            // Filtrar solo libros activos (Estado == 0)
+            var activeBooks = booksList.Where(b => b != null && b.State == false).ToList();
             return View(activeBooks);
         }
+
 
         // GET: Books/Create
         [HttpGet]
@@ -70,42 +72,87 @@ namespace FrontBerries.Controllers
             ViewBag.Editorials = GetEditorials();
             ViewBag.Countries = GetCountries();
 
-            return View();
+            var model = new BookViewModel();
+            return View(model);
         }
 
-        // POST: Books/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(BookViewModel newBook)
+        public IActionResult Create(BookViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Authors = GetAuthors();
-                ViewBag.Editorials = GetEditorials();
-                ViewBag.Countries = GetCountries();
-                return View(newBook);
+                model.Authors = GetAuthors();
+                model.Editorials = GetEditorials();
+                model.Countries = GetCountries();
+                return View(model);
             }
 
-            var jsonContent = new StringContent(
-                JsonConvert.SerializeObject(newBook),
-                Encoding.UTF8,
-                "application/json");
+            try
+            {
+                // Construir URL con parámetros codificados
+                string url = $"/Book?" +
+                             $"title={Uri.EscapeDataString(model.BookTitle)}" +
+                             $"&isbn={Uri.EscapeDataString(model.ISBN ?? "")}" +
+                             $"&publicationDate={model.PublicationDate:yyyy-MM-dd}" +
+                             $"&pageCount={model.PageCount}" +
+                             $"&editorialId={model.EditorialId}" +
+                             $"&countryId={model.CountryId}" +
+                             $"&imgUrl={Uri.EscapeDataString(model.ImgUrl ?? "")}" +
+                             $"&authorId={model.AuthorId}" +
+                             $"&loanState={model.LoanState.ToString().ToLower()}";
 
-            var response = _client.PostAsync(_client.BaseAddress + "/Book", jsonContent).Result;
+                // Enviar POST sin cuerpo
+                HttpResponseMessage response = _client.PostAsync(_client.BaseAddress + url, null).Result;
 
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "¡Libro creado con éxito!";
+                    return RedirectToAction("Books");
+                }
+                else
+                {
+                    string errorContent = response.Content.ReadAsStringAsync().Result;
+                    TempData["errorMessage"] = $"Error de la API: {errorContent}";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error interno: {ex.Message}";
+            }
+
+            // Recargar listas si hay error
+            model.Authors = GetAuthors();
+            model.Editorials = GetEditorials();
+            model.Countries = GetCountries();
+            return View(model);
+        }
+
+
+        [HttpGet]
+        public IActionResult Delete()
+        {
+            // Cargar lista de libros para mostrar
+            var books = Books(); // Implementa este método para obtener libros
+            return View(books);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            // Lógica para eliminar libro vía API
+            var response = _client.DeleteAsync($"/Book/Delete/{id}").Result;
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Books"); // Cambia si tu acción de listado se llama diferente
+                TempData["successMessage"] = "Libro eliminado con éxito.";
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Error al crear el libro en la API.");
-                ViewBag.Authors = GetAuthors();
-                ViewBag.Editorials = GetEditorials();
-                ViewBag.Countries = GetCountries();
-                return View(newBook);
+                TempData["errorMessage"] = $"Error al eliminar libro: {response.ReasonPhrase}";
             }
+            return RedirectToAction("Delete");
         }
+
 
         private List<EditorialViewModel> GetEditorials()
         {
