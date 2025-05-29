@@ -75,7 +75,6 @@ namespace FrontBerries.Controllers
             var model = new BookViewModel();
             return View(model);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(BookViewModel model)
@@ -102,8 +101,6 @@ namespace FrontBerries.Controllers
                              $"&authorId={model.AuthorId}" +
                              $"&loanState={model.LoanState.ToString().ToLower()}";
 
-                // Enviar POST sin cuerpo
-                HttpResponseMessage response = _client.PostAsync(_client.BaseAddress + url, null).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -128,7 +125,6 @@ namespace FrontBerries.Controllers
             return View(model);
         }
 
-
         [HttpGet]
         public IActionResult Delete()
         {
@@ -150,7 +146,6 @@ namespace FrontBerries.Controllers
             {
                 TempData["errorMessage"] = $"Error al eliminar libro: {response.ReasonPhrase}";
             }
-            return RedirectToAction("Delete");
         }
 
 
