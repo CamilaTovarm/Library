@@ -198,9 +198,12 @@
                 });
 
                 if (response.ok) {
-                    messageDiv.textContent = 'Libro creado con éxito.';
+                    messageDiv.textContent = 'Libro creado con éxito. Redirigiendo...';
                     messageDiv.classList.add('success');
-                    this.reset();
+                    //this.reset();
+                    setTimeout(() => {
+                        window.location.href = '/Books/Books';
+                    }, 1500);
                 } else {
                     const errorText = await response.text();
                     messageDiv.textContent = `Error al crear libro: ${errorText || response.statusText}`;

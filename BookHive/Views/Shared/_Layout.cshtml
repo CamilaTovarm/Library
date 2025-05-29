@@ -51,6 +51,12 @@
                 .secondarybar .nav-link:hover {
                     color: #b2dfdb !important;
                 }
+
+        /* Footer con separación */
+        footer.footer {
+            margin-top: 3rem;
+            border-top: none;
+        }
     </style>
 </head>
 <body>
@@ -67,6 +73,8 @@
             <nav class="main-menu d-none d-md-flex">
                 <a asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
                 <a asp-area="" asp-controller="Home" asp-action="MainBi">BIBLIOTECA</a>
+                <a asp-area="" asp-controller="Home" asp-action="MainAut">AUTORES</a>
+                <a asp-area="" asp-controller="Home" asp-action="MainEdi">EDITORIALES</a>
                 <a asp-area="" asp-controller="Home" asp-action="MainLoans">RESERVAR</a>
                 <a asp-area="" asp-controller="Home" asp-action="MainReturns">DEVOLUCIÓN</a>
                 <a asp-area="" asp-controller="Home" asp-action="MainUser">USUARIOS</a>
@@ -90,13 +98,15 @@
         </div>
     </nav>
 
+    <!-- Contenido principal -->
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-5">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <!-- Pie de página -->
+    <footer class="footer text-muted">
         <div class="container">
             &copy; 2025 - BookHive - <a asp-area="" asp-controller="Home" asp-action="Privacy">About Us</a>
         </div>
@@ -108,4 +118,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
