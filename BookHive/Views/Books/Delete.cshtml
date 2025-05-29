@@ -139,14 +139,20 @@
             const container = document.getElementById('booksGrid');
             container.innerHTML = '';
 
-            if (!books.length) {
+            // Filtrar solo libros activos (state === false)
+            const activeBooks = books.filter(book => book.state === false);
+
+            if (!activeBooks.length) {
                 container.innerHTML = '<p>No hay libros disponibles.</p>';
                 return;
             }
 
-            books.forEach(book => {
+            activeBooks.forEach(book => {
                 const card = document.createElement('div');
                 card.className = 'book-card';
+
+                // Usa book.IdBook o book.bookId según el JSON
+                const bookId = book.IdBook || book.bookId;
 
                 card.innerHTML = `
                     <img class="book-cover" src="${book.imgUrl || 'https://via.placeholder.com/100x140?text=No+Image'}" alt="Portada del libro" />
@@ -155,7 +161,7 @@
                     <div class="book-editorial">${escapeHtml(book.editorialName || 'Editorial desconocida')}</div>
                     <div class="book-year">${book.publicationDate ? new Date(book.publicationDate).getFullYear() : 'Año desconocido'}</div>
                     <div class="book-description">ISBN: ${escapeHtml(book.isbn || 'N/A')}<br/>Páginas: ${book.pageCount || 'N/A'}</div>
-                    <button class="btn-delete" data-id="${book.bookId}">Eliminar</button>
+                    <button class="btn-delete" data-id="${bookId}">Eliminar</button>
                 `;
 
                 container.appendChild(card);
