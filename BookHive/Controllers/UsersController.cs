@@ -29,6 +29,9 @@ namespace BookHive.Controllers
             {
                 string data = response.Content.ReadAsStringAsync().Result;
                 users = JsonConvert.DeserializeObject<List<UserViewModel>>(data);
+
+                // Filtrar solo usuarios activos (State == false)
+                users = users.FindAll(u => u.State == false);
             }
             else
             {
@@ -77,5 +80,50 @@ namespace BookHive.Controllers
             TempData["successMessage"] = "Usuario creado con éxito.";
             return RedirectToAction("Index");
         }
+
+
+
+
+
+        // GET: Mostrar vista para eliminar usuarios activos
+        [HttpGet]
+        public IActionResult Delete()
+        {
+            List<UserViewModel> users = new List<UserViewModel>();
+
+            var response = _client.GetAsync(_client.BaseAddress + "/api/User").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                users = JsonConvert.DeserializeObject<List<UserViewModel>>(data);
+
+                // Filtrar solo usuarios activos (State == false)
+                users = users.FindAll(u => u.State == false);
+            }
+            else
+            {
+                TempData["errorMessage"] = "Error al obtener la lista de usuarios.";
+            }
+
+            return View(users);
+        }
+
+        // POST: Eliminar usuario por Id
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var response = _client.DeleteAsync($"/api/User/Delete/{id}").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["successMessage"] = "Usuario eliminado con éxito.";
+            }
+            else
+            {
+                TempData["errorMessage"] = $"Error al eliminar usuario: {response.ReasonPhrase}";
+            }
+            return RedirectToAction("Delete");
+        }
     }
 }
+

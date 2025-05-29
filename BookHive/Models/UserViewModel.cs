@@ -16,5 +16,6 @@ namespace BookHive.Models
         public DateTime? CreateDate { get; set; }
         public bool State { get; set; }
 
+
     }
 }
