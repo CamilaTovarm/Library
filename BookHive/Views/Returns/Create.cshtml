@@ -32,7 +32,7 @@
 </div>
 
 <style>
-    /* Mantén el CSS que ya tienes */
+    /* Mantén tu CSS existente */
     .main {
         text-align: center;
         padding: 70px 20px 40px;
@@ -109,7 +109,7 @@
 </style>
 
 <script>
-    document.getElementById('returnForm').addEventListener('submit', function (e) {
+    document.getElementById('returnForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const loanId = document.getElementById('LoanId').value;
@@ -123,18 +123,42 @@
             return;
         }
 
-        const url = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Returns?returnDate=${encodeURIComponent(returnDate)}&loanId=${encodeURIComponent(loanId)}&fineImposed=${encodeURIComponent(fineImposed)}`;
+        try {
+            // Crear la devolución
+            const returnUrl = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Returns?returnDate=${encodeURIComponent(returnDate)}&loanId=${encodeURIComponent(loanId)}&fineImposed=${encodeURIComponent(fineImposed)}`;
+            const returnResponse = await fetch(returnUrl, { method: 'POST' });
 
-                messageDiv.textContent = 'Devolución registrada con éxito. Redirigiendo...';
-                messageDiv.className = 'message success';
-                this.reset();
-                setTimeout(() => {
-                    window.location.href = '/Returns/ReturnGet'; // Ajusta la ruta si es diferente
-                }, 1500);
-            } else {
+            if (!returnResponse.ok) {
                 messageDiv.textContent = 'Error al registrar la devolución.';
                 messageDiv.className = 'message error';
+                return;
             }
+
+            // Cambiar estado de la reserva a false usando DELETE
+            const deleteUrl = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Loans/Delete/${loanId}`;
+            const deleteResponse = await fetch(deleteUrl, { method: 'DELETE' });
+
+            if (!deleteResponse.ok) {
+                messageDiv.textContent = 'Devolución registrada, pero error al actualizar el estado de la reserva.';
+                messageDiv.className = 'message error';
+                return;
+            }
+
+            messageDiv.textContent = 'Devolución registrada y reserva actualizada con éxito. Redirigiendo...';
+            messageDiv.className = 'message success';
+            this.reset();
+
+            setTimeout(() => {
+                window.location.href = '/Returns/ReturnGet'; // Ajusta la ruta según tu proyecto
+            }, 1500);
+
+        } catch (error) {
+            messageDiv.textContent = 'Error: ' + error.message;
+            messageDiv.className = 'message error';
+        }
     });
 </script>
+
+
+
 

@@ -29,7 +29,7 @@ namespace Library.Services
             {
                 throw new Exception($"This Loan with the Id {id} doesn't exist.");
             }
-            loanToDelete.State = false;
+            loanToDelete.State = true;
             loanToDelete.CreateDate = DateTime.Now;
             return await _loansRepository.DeleteLoans(loanToDelete);
         }
