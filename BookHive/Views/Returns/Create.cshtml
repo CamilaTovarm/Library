@@ -26,7 +26,7 @@
             <label for="FineImposed">Multa impuesta</label>
             <input id="FineImposed" name="FineImposed" type="number" step="0.01" min="0" value="0" />
 
-            <button type="submit" class="btn-reservar">Registrar devolución</button>
+            <button type="submit" class="btn-reservar" id="btnRegistrarDevolucion">Registrar devolución</button>
         </form>
     </div>
 </div>
@@ -90,8 +90,13 @@
         transition: background 0.2s;
     }
 
-        .btn-reservar:hover {
+        .btn-reservar:hover:enabled {
             background-color: #388e3c;
+        }
+
+        .btn-reservar:disabled {
+            background-color: #a5d6a7;
+            cursor: not-allowed;
         }
 
     .message {
@@ -112,6 +117,7 @@
     document.getElementById('returnForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
+        const btnRegistrar = document.getElementById('btnRegistrarDevolucion');
         const loanId = document.getElementById('LoanId').value;
         const returnDate = document.getElementById('ReturnDate').value;
         const fineImposed = document.getElementById('FineImposed').value || 0;
@@ -123,6 +129,10 @@
             return;
         }
 
+        // Deshabilitar el botón para evitar múltiples envíos
+        btnRegistrar.disabled = true;
+        btnRegistrar.style.cursor = 'not-allowed';
+
         try {
             // 1. Crear la devolución
             const returnUrl = `https://bookhive-heaedbaqfgbacdhw.canadacentral-01.azurewebsites.net/api/Returns?returnDate=${encodeURIComponent(returnDate)}&loanId=${encodeURIComponent(loanId)}&fineImposed=${encodeURIComponent(fineImposed)}`;
@@ -131,6 +141,8 @@
             if (!returnResponse.ok) {
                 messageDiv.textContent = 'Error al registrar la devolución.';
                 messageDiv.className = 'message error';
+                btnRegistrar.disabled = false;
+                btnRegistrar.style.cursor = 'pointer';
                 return;
             }
 
@@ -141,6 +153,8 @@
             if (!deleteResponse.ok) {
                 messageDiv.textContent = 'Devolución registrada, pero error al actualizar el estado de la reserva.';
                 messageDiv.className = 'message error';
+                btnRegistrar.disabled = false;
+                btnRegistrar.style.cursor = 'pointer';
                 return;
             }
 
@@ -179,6 +193,8 @@
                 const errorText = await updateResponse.text();
                 messageDiv.textContent = 'Devolución registrada, pero error al actualizar disponibilidad del libro: ' + errorText;
                 messageDiv.className = 'message error';
+                btnRegistrar.disabled = false;
+                btnRegistrar.style.cursor = 'pointer';
                 return;
             }
 
@@ -194,6 +210,8 @@
         } catch (error) {
             messageDiv.textContent = 'Error: ' + error.message;
             messageDiv.className = 'message error';
+            btnRegistrar.disabled = false;
+            btnRegistrar.style.cursor = 'pointer';
         }
     });
 </script>

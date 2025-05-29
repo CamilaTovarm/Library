@@ -20,7 +20,7 @@
             <label for="UserName">Nombre de usuario</label>
             <input id="UserName" name="UserName" required />
 
-            <button type="submit" class="btn-reservar">Crear Usuario</button>
+            <button type="submit" class="btn-reservar" id="btnCrearUsuario">Crear Usuario</button>
         </form>
     </div>
 </div>
@@ -83,8 +83,13 @@
         transition: background 0.2s;
     }
 
-        .btn-reservar:hover {
+        .btn-reservar:hover:enabled {
             background-color: #388e3c;
+        }
+
+        .btn-reservar:disabled {
+            background-color: #a5d6a7;
+            cursor: not-allowed;
         }
 
     .message {
@@ -105,6 +110,7 @@
     document.getElementById('formUser').addEventListener('submit', function (e) {
         e.preventDefault();
 
+        const btnCrearUsuario = document.getElementById('btnCrearUsuario');
         const name = document.getElementById('Name').value.trim();
         const email = document.getElementById('Email').value.trim();
         const userName = document.getElementById('UserName').value.trim();
@@ -115,6 +121,10 @@
             messageDiv.className = 'message error';
             return;
         }
+
+        // Deshabilitar el botón para evitar múltiples envíos
+        btnCrearUsuario.disabled = true;
+        btnCrearUsuario.style.cursor = 'not-allowed';
 
         const password = 'Dios123';
         const userTypeId = 1;
@@ -135,11 +145,16 @@
             } else {
                 messageDiv.textContent = 'Error al crear el usuario.';
                 messageDiv.className = 'message error';
+                btnCrearUsuario.disabled = false;
+                btnCrearUsuario.style.cursor = 'pointer';
             }
         })
         .catch(error => {
             messageDiv.textContent = 'Error: ' + error;
             messageDiv.className = 'message error';
+            btnCrearUsuario.disabled = false;
+            btnCrearUsuario.style.cursor = 'pointer';
         });
     });
 </script>
+
