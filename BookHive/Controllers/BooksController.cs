@@ -64,66 +64,7 @@ namespace FrontBerries.Controllers
         }
 
 
-        // GET: Books/Create
-        [HttpGet]
-        public IActionResult Create()
-        {
-            ViewBag.Authors = GetAuthors();
-            ViewBag.Editorials = GetEditorials();
-            ViewBag.Countries = GetCountries();
 
-            var model = new BookViewModel();
-            return View(model);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(BookViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                model.Authors = GetAuthors();
-                model.Editorials = GetEditorials();
-                model.Countries = GetCountries();
-                return View(model);
-            }
-
-            try
-            {
-                // Construir URL con parámetros codificados
-                string url = $"/Book?" +
-                             $"title={Uri.EscapeDataString(model.BookTitle)}" +
-                             $"&isbn={Uri.EscapeDataString(model.ISBN ?? "")}" +
-                             $"&publicationDate={model.PublicationDate:yyyy-MM-dd}" +
-                             $"&pageCount={model.PageCount}" +
-                             $"&editorialId={model.EditorialId}" +
-                             $"&countryId={model.CountryId}" +
-                             $"&imgUrl={Uri.EscapeDataString(model.ImgUrl ?? "")}" +
-                             $"&authorId={model.AuthorId}" +
-                             $"&loanState={model.LoanState.ToString().ToLower()}";
-
-
-                if (response.IsSuccessStatusCode)
-                {
-                    TempData["successMessage"] = "¡Libro creado con éxito!";
-                    return RedirectToAction("Books");
-                }
-                else
-                {
-                    string errorContent = response.Content.ReadAsStringAsync().Result;
-                    TempData["errorMessage"] = $"Error de la API: {errorContent}";
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = $"Error interno: {ex.Message}";
-            }
-
-            // Recargar listas si hay error
-            model.Authors = GetAuthors();
-            model.Editorials = GetEditorials();
-            model.Countries = GetCountries();
-            return View(model);
-        }
 
         [HttpGet]
         public IActionResult Delete()
@@ -146,7 +87,94 @@ namespace FrontBerries.Controllers
             {
                 TempData["errorMessage"] = $"Error al eliminar libro: {response.ReasonPhrase}";
             }
+            return RedirectToAction("Delete");
         }
+
+
+
+
+
+        ///////////////////////////////////////
+        /// 
+        // GET: Mostrar formulario para editar libro
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            BookViewModel book = null;
+
+            var response = _client.GetAsync($"/Book/{id}").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                book = JsonConvert.DeserializeObject<BookViewModel>(data);
+            }
+            else
+            {
+                TempData["errorMessage"] = "Error al obtener el libro.";
+                return RedirectToAction("Books");
+            }
+
+            // Cargar listas para dropdowns
+            ViewBag.Authors = GetAuthors();
+            ViewBag.Editorials = GetEditorials();
+            ViewBag.Countries = GetCountries();
+
+            return View(book);
+        }
+
+        [HttpGet]
+        public IActionResult Update()
+        {
+            return View();
+        }
+
+        // Acción para actualizar libro vía PUT con parámetros en query string
+        [HttpPut("/Book/Update/{id}")]
+        public IActionResult UpdateBook(int id,
+            [FromQuery] string title,
+            [FromQuery] string isbn,
+            [FromQuery] DateTime publicationDate,
+            [FromQuery] int pageCount,
+            [FromQuery] int editorialId,
+            [FromQuery] int countryId,
+            [FromQuery] string imgUrl,
+            [FromQuery] int authorId,
+            [FromQuery] bool loanState)
+        {
+            try
+            {
+                var responseGet = _client.GetAsync($"/Book/{id}").Result;
+                if (!responseGet.IsSuccessStatusCode)
+                    return NotFound("Libro no encontrado");
+
+                var data = responseGet.Content.ReadAsStringAsync().Result;
+                var book = JsonConvert.DeserializeObject<BookViewModel>(data);
+
+                book.BookTitle = title;
+                book.ISBN = isbn;
+                book.PublicationDate = publicationDate;
+                book.PageCount = pageCount;
+                book.EditorialId = editorialId;
+                book.CountryId = countryId;
+                book.ImgUrl = imgUrl;
+                book.AuthorId = authorId;
+                book.LoanState = loanState;
+
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
+                var responsePut = _client.PutAsync($"/Book/Update/{id}", jsonContent).Result;
+
+                if (responsePut.IsSuccessStatusCode)
+                    return Ok("Libro actualizado correctamente");
+                else
+                    return StatusCode((int)responsePut.StatusCode, "Error al actualizar libro");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno: {ex.Message}");
+            }
+        }
+
+
 
 
         private List<EditorialViewModel> GetEditorials()

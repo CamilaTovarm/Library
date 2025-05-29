@@ -129,6 +129,7 @@
                 const response = await fetch(`${apiBase}/Book`);
                 if (!response.ok) throw new Error('Error al obtener libros');
                 const books = await response.json();
+                console.log(books);
                 renderBooks(books);
             } catch (error) {
                 showMessage(error.message, 'error');
@@ -140,7 +141,8 @@
             container.innerHTML = '';
 
             // Filtrar solo libros activos (state === false)
-            const activeBooks = books.filter(book => book.state === false);
+            // Según tu JSON, editorial.state indica si la editorial está activa
+            const activeBooks = books.filter(book => book.state === false || book.state === undefined);
 
             if (!activeBooks.length) {
                 container.innerHTML = '<p>No hay libros disponibles.</p>';
@@ -151,14 +153,20 @@
                 const card = document.createElement('div');
                 card.className = 'book-card';
 
-                // Usa book.IdBook o book.bookId según el JSON
-                const bookId = book.IdBook || book.bookId;
+                // bookId o IdBook según JSON
+                const bookId = book.bookId || book.IdBook;
+
+                // Autor puede no estar en el JSON, si está, usa author.authorName, si no, muestra 'Autor desconocido'
+                const authorName = book.author?.authorName || 'Autor desconocido';
+
+                // Editorial según JSON que compartiste
+                const editorialName = book.editorial?.editorialName || 'Editorial desconocida';
 
                 card.innerHTML = `
                     <img class="book-cover" src="${book.imgUrl || 'https://via.placeholder.com/100x140?text=No+Image'}" alt="Portada del libro" />
                     <div class="book-title">${escapeHtml(book.bookTitle)}</div>
-                    <div class="book-author">${escapeHtml(book.authorNames?.join(', ') || 'Autor desconocido')}</div>
-                    <div class="book-editorial">${escapeHtml(book.editorialName || 'Editorial desconocida')}</div>
+                    <div class="book-author">${escapeHtml(authorName)}</div>
+                    <div class="book-editorial">${escapeHtml(editorialName)}</div>
                     <div class="book-year">${book.publicationDate ? new Date(book.publicationDate).getFullYear() : 'Año desconocido'}</div>
                     <div class="book-description">ISBN: ${escapeHtml(book.isbn || 'N/A')}<br/>Páginas: ${book.pageCount || 'N/A'}</div>
                     <button class="btn-delete" data-id="${bookId}">Eliminar</button>
