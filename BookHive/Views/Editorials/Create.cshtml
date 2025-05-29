@@ -1,20 +1,24 @@
 ﻿@model BookHive.Models.EditorialViewModel
 
 @{
-    ViewData["Title"] = "Crear Editorial";
+    ViewData["Title"] = "Crear Editorial 🆕";
 }
 
 <div class="main">
     <div class="reserve-card">
-        <h2>Crear nueva editorial</h2>
+        <h2 class="title-inline">
+            Crear nueva editorial <span class="emoji">🆕</span>
+        </h2>
 
         <div id="message" class="message"></div>
 
-        <form id="formEditorial">
+        <form id="formEditorial" class="form-container">
             <label for="EditorialName">Nombre de la editorial</label>
             <input id="EditorialName" name="EditorialName" required />
 
-            <button type="submit" class="btn-reservar" id="btnCrearEditorial">Crear Editorial</button>
+            <div class="btn-container">
+                <button type="submit" class="btn-reservar" id="btnCrearEditorial">Crear Editorial</button>
+            </div>
         </form>
     </div>
 </div>
@@ -27,7 +31,8 @@
 
     .reserve-card {
         background: white;
-        width: 340px;
+        width: max-content;
+        max-width: 90vw;
         margin: 40px auto;
         padding: 32px 28px;
         border-radius: 18px;
@@ -35,13 +40,30 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        box-sizing: border-box;
+        white-space: nowrap;
     }
 
-        .reserve-card h2 {
-            color: #1b5e20;
-            margin-bottom: 18px;
-            font-size: 2em;
-        }
+    .title-inline {
+        color: #1b5e20;
+        margin-bottom: 18px;
+        font-size: 2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .emoji {
+        font-size: 0.8em;
+        line-height: 1;
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 
     label {
         display: block;
@@ -61,6 +83,11 @@
         font-size: 1em;
         margin-bottom: 10px;
         background: #f9fdf9;
+        box-sizing: border-box;
+    }
+
+    .btn-container {
+        margin-top: auto; /* Empuja el botón hacia abajo */
     }
 
     .btn-reservar {
@@ -72,7 +99,6 @@
         border-radius: 20px;
         font-size: 1.1em;
         font-weight: bold;
-        margin-top: 18px;
         cursor: pointer;
         transition: background 0.2s;
     }
@@ -114,7 +140,6 @@
             return;
         }
 
-        // Deshabilitar el botón para evitar múltiples envíos
         btnCrearEditorial.disabled = true;
         btnCrearEditorial.style.cursor = 'not-allowed';
 
@@ -129,7 +154,7 @@
                 messageDiv.className = 'message success';
                 this.reset();
                 setTimeout(() => {
-                    window.location.href = '/Editorials/Index'; // Ajusta esta ruta si es necesario
+                    window.location.href = '/Editorials/Index';
                 }, 1500);
             } else {
                 messageDiv.textContent = 'Error al crear la editorial.';
@@ -146,4 +171,3 @@
         });
     });
 </script>
-
