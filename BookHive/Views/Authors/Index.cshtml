@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<BookHive.Models.AuthorViewModel>
 
 @{
-    ViewData["Title"] = "Listado de Autores";
+    ViewData["Title"] = "Listado de Autores ✍️";
 }
 
 <h1 class="page-title">@ViewData["Title"]</h1>
@@ -13,12 +13,12 @@
 
 @if (!Model.Any())
 {
-    <p>No hay autores registrados.</p>
+    <p class="no-data">No hay autores registrados.</p>
 }
 else
 {
     <table class="table table-striped table-bordered">
-        <thead class="table-success">
+        <thead>
             <tr>
                 <th>ID Autor</th>
                 <th>Nombre</th>
@@ -38,17 +38,24 @@ else
 
 <style>
     .page-title {
-        color: #1b5e20;
+        color: #2E5C41; /* Verde bosque oscuro */
         margin-top: 30px;
         margin-bottom: 20px;
         font-weight: 700;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
+    .no-data {
+        color: #3C3C3C;
+        font-size: 1.1rem;
+        margin-top: 20px;
+    }
+
     table.table {
         width: 100%;
         border-collapse: collapse;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #3C3C3C; /* Gris carbón para texto general */
     }
 
         table.table th, table.table td {
@@ -58,12 +65,12 @@ else
         }
 
         table.table thead {
-            background-color: #43a047;
+            background-color: #D09F3C; /* Amarillo quemado */
             color: white;
         }
 
         table.table tbody tr:hover {
-            background-color: #f1f8f1;
+            background-color: #DDF6D2; /* Verde claro al pasar el mouse */
         }
 
     .alert {
@@ -71,3 +78,4 @@ else
         margin-bottom: 20px;
     }
 </style>
+
