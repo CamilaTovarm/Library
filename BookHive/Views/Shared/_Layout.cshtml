@@ -32,11 +32,11 @@
                     color: #3F7D58;
                 }
 
-        .search-box input {
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            padding: 4px 10px;
-        }
+            /* Imagen reemplazo buscador */
+            .topbar .icon-right img {
+                height: 36px;
+            }
+
         /* Barra secundaria */
         .secondarybar {
             background: #3F7D58;
@@ -63,6 +63,7 @@
                 <img src="/src/images/BookHive.jpg" alt="Logo BookHive" class="logo me-3" />
                 <span style="font-weight:bold; font-size:1.3rem; color:#222;">BookHive</span>
             </div>
+
             <!-- Menú principal -->
             <nav class="main-menu d-none d-md-flex">
                 <a asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
@@ -72,12 +73,14 @@
                 <a asp-area="" asp-controller="Home" asp-action="MainUser">USUARIOS</a>
                 <a asp-area="" asp-controller="Home" asp-action="Privacy">ABOUT US</a>
             </nav>
-            <!-- Buscador -->
-            <form class="search-box d-none d-md-block" role="search">
-                <input type="text" placeholder="Buscar en BookHive" aria-label="Buscar" />
-            </form>
+
+            <!-- Imagen en lugar del buscador -->
+            <div class="icon-right d-none d-md-flex align-items-center">
+                <img src="/src/images/Bookss.jpg" alt="Ícono superior derecho" />
+            </div>
         </div>
     </div>
+
     <!-- Barra secundaria -->
     <nav class="secondarybar">
         <div class="container-fluid d-flex align-items-center">
@@ -106,3 +109,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
