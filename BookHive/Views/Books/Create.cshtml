@@ -151,8 +151,6 @@
                 <label for="ImgUrl">URL de la portada</label>
                 <input asp-for="ImgUrl" id="ImgUrl" name="ImgUrl" type="url" />
 
-                <!-- LoanState fijo a true, no se muestra checkbox -->
-
                 <button type="submit" class="btn-create">Crear libro</button>
             </form>
         </div>
@@ -214,11 +212,5 @@
             }
         });
     </script>
-
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        }
-    }
 </body>
 </html>
